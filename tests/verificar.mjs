@@ -26,6 +26,17 @@ const DIST = join(RAIZ, 'dist');
 const CAPTURAS = join(RAIZ, 'tests', 'capturas');
 const PUERTO = 4399;
 
+/**
+ * Mismo `base` que astro.config.mjs. GitHub Pages sirve el contenido de
+ * dist/ colgado de esta subcarpeta (tu-usuario.github.io/landing-spider-man/),
+ * así que el servidor de prueba tiene que simular exactamente eso — si
+ * sirviera dist/ en la raíz, cualquier link con el prefijo de base
+ * (favicon, fuentes, el propio contador) daría 404 acá pero funcionaría
+ * en producción, o viceversa. Si cambiás el `base` del config, cambialo
+ * también acá.
+ */
+const BASE = '/landing-spider-man/';
+
 /* ------------------------------------------------------------------ *
  * Mini servidor estático para dist/. Sirve para probar exactamente el
  * mismo build que se subiría a producción.
@@ -36,12 +47,25 @@ const TIPOS = {
   '.js': 'text/javascript; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
 };
 
 function servir() {
   const servidor = createServer(async (req, res) => {
     let ruta = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+
+    // El sitio "vive" bajo /landing-spider-man/, igual que en GitHub Pages.
+    // Cualquier pedido fuera de esa subcarpeta no existe (404), tal como
+    // pasaría en producción con una URL de otro repo o de la raíz del dominio.
+    if (!ruta.startsWith(BASE)) {
+      res.writeHead(404).end('404');
+      return;
+    }
+    ruta = ruta.slice(BASE.length - 1); // conserva la barra inicial
+
     if (ruta.endsWith('/')) ruta += 'index.html';
     const archivo = join(DIST, ruta);
 
@@ -109,7 +133,7 @@ const erroresConsola = [];
 pagina.on('console', (m) => m.type() === 'error' && erroresConsola.push(m.text()));
 pagina.on('pageerror', (e) => erroresConsola.push(String(e)));
 
-const base = `http://localhost:${PUERTO}`;
+const base = `http://localhost:${PUERTO}${BASE}`;
 await pagina.goto(base, { waitUntil: 'networkidle' });
 
 console.log('\n── ESTRUCTURA Y SEO ────────────────────────────────');

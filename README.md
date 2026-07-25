@@ -72,19 +72,24 @@ caiga, ni base de datos que saturar, ni funciones serverless que arranquen en
 frío bajo carga. `npm run build` genera puros archivos; un pico de tráfico se
 lo come una CDN, que es exactamente para lo que existen.
 
-**b) Los assets llevan cabecera de caché agresiva** (`public/_headers`, que
-leen solos Netlify y Cloudflare Pages). Los archivos con hash en el nombre (`_astro/client.a1b2c3.js`,
-`/fonts/*.woff2`) se marcan `immutable, max-age=31536000`: la CDN los sirve
-desde el borde durante un año sin volver a preguntarle nada al origen. Esa es
-la diferencia real entre "es estático" y "aguanta un pico": sin estas
-cabeceras, cada visita puede seguir golpeando el servidor de origen aunque el
-archivo no haya cambiado.
+**b) El sitio se sirve desde GitHub Pages, detrás de la CDN de Fastly.**
+Los assets con hash en el nombre (`_astro/client.a1b2c3.js`,
+`_astro/archivo-variable.a1b2c3.woff2`) son inmutables por construcción: si
+el contenido cambia, cambia el nombre del archivo, así que un pico de
+tráfico repitiendo la misma URL una y otra vez es exactamente el caso ideal
+para cualquier CDN — nunca hay que revalidar nada. GitHub Pages no permite
+configurar cabeceras `Cache-Control` a medida (a diferencia de Netlify o
+Cloudflare Pages), pero tampoco hace falta: al ser 100% estático detrás de
+una CDN global, no hay ningún cómputo por request que un pico de tráfico
+pueda saturar.
 
-**c) Las fuentes están autoalojadas** (`public/fonts/`, subset latin, unos 65
+**c) Las fuentes están autoalojadas** (`src/fonts/`, subset latin, unos 65
 KB en total) en vez de pedírselas a `fonts.googleapis.com`. Un dominio externo
 menos es una conexión TLS menos y un punto de fallo menos en el camino
 crítico: si Google Fonts tiene una mala noche justo el día del estreno, acá no
-se entera nadie.
+se entera nadie. Al vivir en `src/` (no en `public/`), Vite las procesa como
+cualquier otro asset del build: les asigna un nombre con hash y las sirve
+desde `_astro/`, junto con el JS y el CSS.
 
 **d) El JavaScript que llega al navegador es el mínimo**, gracias a la
 **arquitectura de islas** de Astro: la página se envía como HTML y sólo los
@@ -176,10 +181,16 @@ proyecto sí tiene un par de capas de seguridad reales:
   nonce por request, imposible en un sitio 100% estático. El único dominio
   externo permitido es `youtube-nocookie.com`, y sólo como `frame-src` para
   el tráiler.
-- **Cabeceras de seguridad estándar** en `public/_headers`:
-  `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` (nadie puede
-  meter el sitio en un `<iframe>` ajeno) y `Referrer-Policy:
-  strict-origin-when-cross-origin`.
+- **Límite real de GitHub Pages, dicho sin vueltas:** a diferencia de Netlify
+  o Cloudflare Pages, no deja configurar cabeceras HTTP a medida
+  (`X-Frame-Options`, `Referrer-Policy`, etc.) — no hay ningún archivo de
+  configuración que lo resuelva, es una limitación de la plataforma. La CSP
+  igual protege porque viaja como `<meta>` en el propio HTML, no como
+  cabecera; lo que sí queda sin cubrir es la protección específica contra
+  clickjacking (`frame-ancestors`, que el spec de CSP ignora a propósito
+  cuando se entrega por `<meta>`). Si el día de mañana esto importa más que
+  la simplicidad de GitHub Pages, migrar a Netlify o Cloudflare Pages es
+  cuestión de minutos — el sitio sigue siendo el mismo HTML estático.
 - **El JSON-LD escapa `<`** antes de inyectarse con `set:html`, para que un
   valor que algún día contenga `</script>` no pueda cerrar la etiqueta antes
   de tiempo e inyectar HTML arbitrario.
@@ -225,17 +236,19 @@ respuesta concreta, no un intento genérico de "atrapar todo":
 
 ```
 landing-spider-man/
-├── astro.config.mjs          Configuración de Astro (React, sitemap, salida estática)
+├── .github/
+│   └── workflows/
+│       └── deploy.yml         Compila y publica en GitHub Pages en cada push a main
+├── astro.config.mjs          Configuración de Astro (React, sitemap, `base` de GitHub Pages)
 ├── package.json
 ├── public/                    Se copia tal cual a la raíz del sitio
-│   ├── _headers               Cabeceras de caché — Netlify / Cloudflare Pages
-│   ├── fonts/                  Archivo, Manrope y Space Mono autoalojados (.woff2)
 │   ├── favicon.svg / favicon.ico / apple-touch-icon.png
 │   ├── og.png                 Imagen de las tarjetas al compartir el enlace
 │   └── robots.txt
 ├── src/
 │   ├── data/
 │   │   └── pelicula.js        ← FUENTE ÚNICA DE VERDAD (fecha, reparto, cines, FAQ)
+│   ├── fonts/                 Archivo, Manrope y Space Mono autoalojados (.woff2)
 │   ├── styles/
 │   │   ├── fuentes.css         @font-face de las fuentes autoalojadas
 │   │   └── global.css         Tokens, reset, tipografía y estilos de las islas React
@@ -328,29 +341,66 @@ de página completa en cada tamaño.
 
 ---
 
-## Desplegar
+## Desplegar (GitHub Pages)
 
-Al ser un sitio estático vale cualquier hosting. Con Netlify o Cloudflare
-Pages basta con:
+El sitio se publica en **GitHub Pages**, gratis, sin cuenta de hosting
+aparte. A diferencia de Netlify o Vercel, GitHub Pages no compila nada por
+su cuenta — sólo sabe servir archivos estáticos — así que el build lo hace
+un workflow de GitHub Actions (`.github/workflows/deploy.yml`, ya incluido
+en el repo) cada vez que se sube algo a `main`.
 
-- Comando de build: `npm run build`
-- Carpeta de publicación: `dist`
+### Configuración inicial (una sola vez)
 
-Los dos leen `public/_headers` solos, sin configuración extra en el panel —
-las cabeceras de caché de un año para los assets con hash ya vienen en el
-repo.
+1. **Activar Pages en el repo.** En GitHub: `Settings` → `Pages` → en
+   "Build and deployment", elegir **Source: GitHub Actions** (no "Deploy
+   from a branch"). Con eso alcanza; el workflow ya está escrito.
 
-Antes de subirlo a producción, dos archivos llevan el dominio de ejemplo
-`spiderman-brand-new-day.example` y hay que cambiarlo por el real:
+2. **Actualizar dos archivos con tu usuario y el nombre real del repo**
+   (ahora mismo llevan el placeholder `tu-usuario`):
 
-1. `site` en `astro.config.mjs` — alimenta la URL canónica, el `sitemap-index.xml`
-   y las rutas absolutas de las tarjetas de Open Graph.
-2. La línea `Sitemap:` en `public/robots.txt`.
+   - `astro.config.mjs`:
+     ```js
+     site: 'https://tu-usuario.github.io',
+     base: '/landing-spider-man/',   // el nombre de TU repo, con barras a los lados
+     ```
+   - `public/robots.txt`, la línea `Sitemap:`.
 
-Si el hosting elegido no es Netlify ni Cloudflare Pages (GitHub Pages,
-S3 + CloudFront...), configurá la caché de `/​_astro/*` y `/fonts/*` a mano ahí:
-es la pieza que más hace que el sitio aguante un pico de tráfico sin
-depender de que el origen responda rápido.
+   Si el repo se llamara distinto a `landing-spider-man`, `base` tiene que
+   coincidir exactamente con ese nombre — es la subcarpeta bajo la que
+   GitHub Pages sirve un repo que no se llama `tu-usuario.github.io`.
+
+3. **Hacer push a `main`.** El workflow se dispara solo, compila con
+   `npm run build` y publica `dist/`. Se puede seguir el progreso en la
+   pestaña **Actions** del repo. Al terminar, el sitio queda en
+   `https://tu-usuario.github.io/landing-spider-man/`.
+
+### El detalle técnico que hace falta entender: `base`
+
+GitHub Pages sirve un repo normal bajo una subcarpeta con su nombre, no en
+la raíz del dominio (salvo que el repo se llame literalmente
+`tu-usuario.github.io`, un caso especial de un solo repo por cuenta). Sin
+el `base` en `astro.config.mjs`, cualquier ruta absoluta del sitio
+(`/favicon.svg`, las fuentes, el propio JavaScript de las islas)
+apuntaría a la raíz del dominio y daría 404 en producción aunque funcione
+perfecto en local. Por eso:
+
+- Todo lo que vive en `public/` (favicon, `og.png`, el sitemap) se referencia
+  en `src/layouts/Base.astro` con un helper (`conBase`) que antepone
+  `import.meta.env.BASE_URL` — la variable que Astro llena con el valor de
+  `base` en tiempo de build.
+- Las fuentes NO viven en `public/fonts/` sino en `src/fonts/`, con rutas
+  relativas en `src/styles/fuentes.css` (`../fonts/...`): al estar dentro de
+  `src/`, Vite las procesa como parte del build (les da un nombre con hash y
+  las sirve desde `_astro/`), y así el `base` se aplica solo, sin tener que
+  escribirlo a mano en un archivo CSS.
+
+### Alternativa: dominio propio
+
+Si en algún momento hay un dominio propio, el `base` se puede sacar por
+completo (queda `base: '/'` o directamente sin la línea) y GitHub Pages
+sirve desde la raíz igual que lo haría cualquier otro hosting estático —
+sólo hay que agregar un archivo `public/CNAME` con el dominio y configurar
+el DNS apuntando a GitHub.
 
 ---
 
