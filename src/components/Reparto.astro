@@ -1,0 +1,157 @@
+---
+import { PELICULA, REPARTO } from '../data/pelicula.js';
+
+/** Iniciales como retrato: sin fotos con derechos, sin peso de red. */
+const iniciales = (nombre) =>
+  nombre
+    .split(' ')
+    .slice(0, 2)
+    .map((parte) => parte[0])
+    .join('');
+
+const FICHA = [
+  { clave: 'Dirección', valor: PELICULA.director },
+  { clave: 'Producción', valor: PELICULA.estudios },
+  { clave: 'Estreno', valor: PELICULA.estrenoLargo },
+  { clave: 'Idiomas', valor: PELICULA.idiomas },
+  { clave: 'Calificación', valor: PELICULA.clasificacion },
+];
+---
+
+<section class="bloque" id="reparto">
+  <div class="bloque__cabecera">
+    <p class="eyebrow revelar">Quién está detrás</p>
+    <h2 class="titulo-seccion revelar" data-retraso="1">Reparto</h2>
+  </div>
+
+  <ul class="reparto">
+    {
+      REPARTO.map((persona, i) => (
+        <li class="actor revelar" data-retraso={String((i % 4) + 1)}>
+          <span class="actor__retrato" aria-hidden="true">
+            {iniciales(persona.actor)}
+          </span>
+          <p class="actor__nombre">{persona.actor}</p>
+          <p class="actor__personaje">{persona.personaje}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <dl class="ficha">
+    {
+      FICHA.map((fila) => (
+        <div class="ficha__fila revelar">
+          <dt class="ficha__clave">{fila.clave}</dt>
+          <dd class="ficha__valor">{fila.valor}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <p class="reparto__aviso">
+    Reparto según anuncios públicos de prensa. Sujeto a cambios hasta el estreno.
+  </p>
+</section>
+
+<style>
+  /* Columnas fijas y no auto-fill a propósito: el reparto tiene 8 fichas, y
+     con 1, 2 o 4 columnas las filas siempre quedan completas. Con auto-fill el
+     número de columnas depende del ancho y las celdas sobrantes dejaban ver el
+     color de las separaciones como huecos más claros. */
+  .reparto {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--borde);
+    border: 1px solid var(--borde);
+  }
+
+  @media (min-width: 34rem) {
+    .reparto {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .reparto {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .actor {
+    background: var(--noche);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    transition: background var(--transicion);
+  }
+  .actor:hover {
+    background: var(--medianoche);
+  }
+
+  .actor__retrato {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--borde-fuerte);
+    border-radius: 50%;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: var(--alba);
+  }
+
+  .actor__nombre {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 88, 'wght' 700;
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .actor__personaje {
+    font-size: 0.82rem;
+    color: var(--luz-tenue);
+    margin-top: 0.35rem;
+  }
+
+  .ficha {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--borde);
+  }
+
+  .ficha__fila {
+    display: grid;
+    grid-template-columns: minmax(8rem, 14rem) 1fr;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  @media (max-width: 40rem) {
+    .ficha__fila {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+
+  .ficha__clave {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--luz-tenue);
+    padding-top: 0.25rem;
+  }
+
+  .ficha__valor {
+    font-size: 1rem;
+  }
+
+  .reparto__aviso {
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--luz-tenue);
+  }
+</style>

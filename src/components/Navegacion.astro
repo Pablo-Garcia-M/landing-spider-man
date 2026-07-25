@@ -1,0 +1,189 @@
+---
+import { NAVEGACION, PELICULA } from '../data/pelicula.js';
+---
+
+<header class="nav" data-nav>
+  <div class="nav__interior">
+    <a class="nav__marca" href="#inicio">
+      <span class="nav__marca-a">Spider-Man</span>
+      <span class="nav__marca-b">Brand New Day</span>
+    </a>
+
+    <nav class="nav__enlaces" aria-label="Secciones de la página">
+      {
+        NAVEGACION.map((enlace) => (
+          <a class="nav__enlace" href={`#${enlace.id}`} data-enlace={enlace.id}>
+            {enlace.texto}
+          </a>
+        ))
+      }
+    </nav>
+
+    <p class="nav__fecha" aria-hidden="true">{PELICULA.estrenoDia} JUL</p>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: var(--altura-nav);
+    display: flex;
+    align-items: center;
+    /* Arranca invisible sobre el hero y aparece cuando el scroll la justifica. */
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      background var(--transicion),
+      border-color var(--transicion),
+      backdrop-filter var(--transicion);
+  }
+
+  .nav[data-fijada='true'] {
+    background: rgb(11 16 38 / 0.82);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--borde);
+  }
+
+  .nav__interior {
+    width: var(--ancho-nav);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .nav__marca {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    text-decoration: none;
+    color: var(--luz);
+  }
+
+  .nav__marca-a {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 70, 'wght' 800;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .nav__marca-b {
+    font-family: var(--mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--alba);
+    margin-top: 0.35em;
+  }
+
+  .nav__enlaces {
+    display: flex;
+    gap: clamp(1rem, 2.4vw, 2rem);
+  }
+
+  .nav__enlace {
+    position: relative;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    color: var(--luz);
+    opacity: 0.7;
+    padding-block: 0.4rem;
+    transition: opacity var(--transicion);
+  }
+
+  .nav__enlace::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    background: var(--alba);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transicion);
+  }
+
+  .nav__enlace:hover,
+  .nav__enlace[aria-current='true'] {
+    opacity: 1;
+  }
+  .nav__enlace:hover::after,
+  .nav__enlace[aria-current='true']::after {
+    transform: scaleX(1);
+  }
+
+  .nav__fecha {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--luz);
+    opacity: 0.55;
+  }
+
+  /* En pantallas estrechas el menú de anclas estorba más de lo que ayuda:
+     se va, y quedan la marca y la fecha, que es lo que hay que recordar. */
+  @media (max-width: 52rem) {
+    .nav__enlaces {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Dos comportamientos, un solo observer cada uno. Cero listeners de 'scroll'.
+   */
+  const barra = document.querySelector('[data-nav]');
+
+  if (barra) {
+    // 1. Fondo sólido en cuanto el hero deja de tocar el borde superior.
+    //    Un centinela de 1px al principio del documento: mientras se vea,
+    //    estamos arriba del todo.
+    const centinela = document.createElement('div');
+    centinela.setAttribute('aria-hidden', 'true');
+    centinela.style.cssText = 'position:absolute;top:0;height:1px;width:1px;';
+    document.body.prepend(centinela);
+
+    new IntersectionObserver(
+      ([entrada]) => {
+        barra.dataset.fijada = String(!entrada.isIntersecting);
+      },
+      { threshold: 0 }
+    ).observe(centinela);
+
+    // 2. Scroll-spy: marca el enlace de la sección visible.
+    const enlaces = new Map();
+    document
+      .querySelectorAll('[data-enlace]')
+      .forEach((a) => enlaces.set(a.dataset.enlace, a));
+
+    const secciones = [...enlaces.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el) => el !== null);
+
+    const espia = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          const enlace = enlaces.get(entrada.target.id);
+          if (!enlace) continue;
+          if (entrada.isIntersecting) enlace.setAttribute('aria-current', 'true');
+          else enlace.removeAttribute('aria-current');
+        }
+      },
+      // La banda activa es el tercio central de la pantalla: así sólo hay una
+      // sección "actual" a la vez, sin parpadeos en las transiciones.
+      { rootMargin: '-35% 0px -55% 0px' }
+    );
+
+    secciones.forEach((s) => espia.observe(s));
+  }
+</script>

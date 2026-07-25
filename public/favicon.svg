@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Spider-Man: Brand New Day">
+  <rect width="64" height="64" fill="#0B1026"/>
+  <g fill="none" stroke="#FF6B35" stroke-width="2.4" stroke-linecap="round">
+    <!-- Radios de la telaraña, desde la esquina superior izquierda. -->
+    <path d="M8 8 L8 56"/>
+    <path d="M8 8 L20 54"/>
+    <path d="M8 8 L38 50"/>
+    <path d="M8 8 L54 38"/>
+    <path d="M8 8 L56 8"/>
+    <!-- Hilos concéntricos. -->
+    <path d="M8 22 Q17 22 20 14"/>
+    <path d="M8 34 Q26 34 32 16"/>
+    <path d="M8 46 Q37 45 46 14"/>
+  </g>
+</svg>

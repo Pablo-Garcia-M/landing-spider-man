@@ -1,0 +1,62 @@
+/**
+ * Fuentes autoalojadas.
+ *
+ * En una landing pensada para un pico de tráfico masivo, cada dominio externo
+ * es un punto de fallo y una conexión TLS más antes de poder pintar texto. Si
+ * fonts.gstatic.com tiene una mala noche justo el día del estreno, con Google
+ * Fonts el texto no aparece hasta que resuelve; autoalojado, las fuentes
+ * viajan en el mismo despliegue que el resto del sitio.
+ *
+ * Subset "latin" únicamente (U+0000–00FF y símbolos): cubre español con
+ * tildes y ñ de sobra, y cada archivo pesa una cuarta parte de lo que pesaría
+ * con cirílico, griego y vietnamita incluidos.
+ *
+ * Rutas RELATIVAS (../fonts/...) a propósito, no absolutas (/fonts/...):
+ * este archivo vive en src/, así que Vite lo procesa como código y no como
+ * un archivo estático de public/. Eso significa que reescribe estas rutas
+ * solo, con hash de contenido incluido, y respeta automáticamente el `base`
+ * de astro.config.mjs — imprescindible porque GitHub Pages sirve el sitio
+ * bajo una subcarpeta (tu-usuario.github.io/landing-spider-man/) y no en la
+ * raíz del dominio. Con una ruta absoluta hardcodeada esto se rompería ahí.
+ */
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62.5% 125%;
+  font-display: swap;
+  src: url('../fonts/archivo-variable.woff2') format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/manrope-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/manrope-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../fonts/manrope-800.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/space-mono-700.woff2') format('woff2');
+}

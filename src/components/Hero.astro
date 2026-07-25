@@ -1,0 +1,177 @@
+---
+import Skyline from './Skyline.astro';
+import CuentaAtras from './react/CuentaAtras.jsx';
+import BotonCalendario from './react/BotonCalendario.jsx';
+import { PELICULA } from '../data/pelicula.js';
+---
+
+<section class="hero" id="inicio">
+  <div class="hero__cielo" aria-hidden="true"></div>
+
+  <div class="hero__skyline">
+    <Skyline />
+  </div>
+
+  <div class="hero__contenido">
+    <p class="hero__eyebrow">Solo en cines &middot; {PELICULA.estrenoLargo}</p>
+
+    <h1 class="hero__titulo">
+      <span class="hero__titulo-a">{PELICULA.titulo}</span>
+      <span class="hero__titulo-b">{PELICULA.subtitulo}</span>
+    </h1>
+
+    {/*
+      client:load — es lo primero que ve el visitante y tiene que estar contando
+      desde el primer instante. Cualquier estrategia diferida dejaría "--" a la
+      vista durante el arranque, justo en el elemento firma de la página.
+    */}
+    <CuentaAtras client:load objetivoISO={PELICULA.estrenoISO} />
+
+    {/* La información que el contador esconde al lector de pantalla, dicha una vez. */}
+    <p class="sr-only">
+      El estreno de {PELICULA.tituloCompleto} es el {PELICULA.estrenoLargo}.
+    </p>
+
+    <div class="acciones hero__acciones">
+      <a href="#trailer" class="boton boton--solido">Ver el tráiler</a>
+      {/*
+        client:visible — el menú sólo importa cuando alguien puede pulsarlo.
+        Su JS no compite con el del contador durante la carga inicial.
+      */}
+      <BotonCalendario
+        client:visible
+        titulo={`${PELICULA.tituloCompleto} — Estreno`}
+        inicio={PELICULA.estrenoICS.inicio}
+        fin={PELICULA.estrenoICS.fin}
+        descripcion="Estreno en cines."
+      />
+    </div>
+  </div>
+
+  <a class="hero__bajar" href="#sinopsis" aria-label="Ir a la sinopsis">
+    <span aria-hidden="true"></span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    /* svh y no vh: descuenta la barra del navegador móvil, que en vh provoca
+       que el contenido quede cortado justo en los teléfonos. */
+    min-height: 100svh;
+    display: grid;
+    overflow: hidden;
+  }
+
+  /* Los hijos comparten la misma celda del grid: se apilan sin position
+     absolute y sin una sola pelea de z-index. */
+  .hero > * {
+    grid-area: 1 / 1;
+  }
+
+  .hero__cielo {
+    background: linear-gradient(
+      to top,
+      var(--alba) 0%,
+      var(--horizonte) 14%,
+      var(--cielo) 40%,
+      var(--medianoche) 72%,
+      var(--noche) 100%
+    );
+  }
+
+  .hero__skyline {
+    align-self: end;
+    width: 100%;
+    height: min(42vh, 340px);
+  }
+
+  .hero__contenido {
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    padding: var(--espacio);
+    padding-bottom: min(26vh, 220px);
+    max-width: 62rem;
+  }
+
+  .hero__eyebrow {
+    font-family: var(--mono);
+    font-size: clamp(0.62rem, 1.5vw, 0.78rem);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  /* Todo el tratamiento del título vive en el eje de ancho de Archivo:
+     condensado + negro arriba, expandido + fino abajo. Una sola familia. */
+  .hero__titulo {
+    display: flex;
+    flex-direction: column;
+    line-height: 0.82;
+  }
+
+  .hero__titulo-a {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 62.5, 'wght' 900;
+    font-size: clamp(3.4rem, 14.5vw, 10.5rem);
+    text-transform: uppercase;
+    letter-spacing: -0.012em;
+  }
+
+  .hero__titulo-b {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 110, 'wght' 400;
+    font-size: clamp(0.85rem, 3.3vw, 2.3rem);
+    text-transform: uppercase;
+    letter-spacing: 0.42em;
+    /* Compensa el tracking sobrante a la derecha del último carácter. */
+    text-indent: 0.42em;
+    color: var(--alba);
+    margin-top: 0.7em;
+  }
+
+  .hero__acciones {
+    justify-content: center;
+    margin-top: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .hero__bajar {
+    align-self: end;
+    justify-self: center;
+    margin-bottom: 1.75rem;
+    width: 1px;
+    height: 3.5rem;
+    background: var(--luz);
+    opacity: 0.35;
+    overflow: hidden;
+  }
+
+  .hero__bajar span {
+    display: block;
+    width: 100%;
+    height: 40%;
+    background: var(--alba);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__bajar span {
+      animation: gotear 2.4s ease-in-out infinite;
+    }
+    @keyframes gotear {
+      0% {
+        transform: translateY(-100%);
+      }
+      60%,
+      100% {
+        transform: translateY(250%);
+      }
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .hero__bajar {
+      display: none;
+    }
+  }
+</style>

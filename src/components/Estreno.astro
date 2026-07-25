@@ -1,0 +1,74 @@
+---
+import BotonCalendario from './react/BotonCalendario.jsx';
+import Compartir from './Compartir.astro';
+import { PELICULA } from '../data/pelicula.js';
+---
+
+<section class="estreno">
+  <p class="estreno__fecha revelar">{PELICULA.estrenoDia}</p>
+  <p class="estreno__mes revelar" data-retraso="1">{PELICULA.estrenoMes}</p>
+  <p class="estreno__nota revelar" data-retraso="2">Solo en cines</p>
+
+  <div class="acciones estreno__acciones revelar" data-retraso="3">
+    <BotonCalendario
+      client:visible
+      variante="solido"
+      titulo={`${PELICULA.tituloCompleto} — Estreno`}
+      inicio={PELICULA.estrenoICS.inicio}
+      fin={PELICULA.estrenoICS.fin}
+      descripcion="Estreno en cines."
+    />
+    <a href="#sesiones" class="boton boton--fantasma">Ver sesiones</a>
+  </div>
+
+  <div class="estreno__compartir revelar" data-retraso="4">
+    <Compartir />
+  </div>
+</section>
+
+<style>
+  .estreno {
+    text-align: center;
+    padding-block: clamp(5rem, 15vh, 10rem);
+    border-top: 1px solid var(--borde);
+  }
+
+  .estreno__fecha {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 62.5, 'wght' 900;
+    font-size: clamp(4rem, 21vw, 15rem);
+    line-height: 0.8;
+    text-transform: uppercase;
+  }
+
+  .estreno__mes {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 115, 'wght' 400;
+    font-size: clamp(1rem, 3.4vw, 2rem);
+    letter-spacing: 0.4em;
+    text-indent: 0.4em;
+    text-transform: uppercase;
+    color: var(--alba);
+    margin-top: 1rem;
+  }
+
+  .estreno__nota {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-top: 1.5rem;
+  }
+
+  .estreno__acciones {
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .estreno__compartir {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+</style>

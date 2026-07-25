@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SPIDER-MAN: Brand New Day — 29 de julio, solo en cines</title>
+<meta name="description" content="Cuenta regresiva para el estreno de SPIDER-MAN: Brand New Day. 29 de julio de 2026, solo en cines.">
+<meta name="theme-color" content="#0B1026">
+
+<!-- Open Graph: cómo se ve el link al compartirlo en WhatsApp, Twitter, Slack. -->
+<meta property="og:type" content="video.movie">
+<meta property="og:title" content="SPIDER-MAN: Brand New Day">
+<meta property="og:description" content="29 de julio. Solo en cines.">
+<meta property="og:locale" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62.5..125,100..900&family=Manrope:wght@400;600;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
+<!-- Datos estructurados: Google entiende que esto es una película, no un blog. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Movie",
+  "name": "Spider-Man: Brand New Day",
+  "datePublished": "2026-07-29",
+  "inLanguage": "es"
+}
+</script>
+
+<style>
+/* ============================================================
+   1. TOKENS
+   Un solo lugar donde vive el sistema visual.
+   ============================================================ */
+:root {
+  /* Paleta: el amanecer sobre la ciudad. De la noche al horizonte. */
+  --noche:      #0B1026;
+  --medianoche: #131A3A;
+  --cielo:      #2B4C8C;
+  --horizonte:  #C41E3A;
+  --alba:       #FF6B35;
+
+  --luz:       #F2EDE4;
+  --luz-tenue: #8B90A8;
+
+  --display: 'Archivo', system-ui, sans-serif;
+  --texto:   'Manrope', system-ui, sans-serif;
+  --mono:    'Space Mono', ui-monospace, monospace;
+
+  --espacio: clamp(1rem, 3vw, 2rem);
+  --ancho:   min(72rem, 92vw);
+}
+
+/* ============================================================
+   2. BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--noche);
+  color: var(--luz);
+  font-family: var(--texto);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:focus-visible { outline: 2px solid var(--alba); outline-offset: 4px; }
+
+img, svg, iframe { display: block; max-width: 100%; }
+
+/* Solo para lectores de pantalla. Invisible, pero presente en el DOM. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+.saltar {
+  position: absolute; top: -100%; left: var(--espacio);
+  z-index: 100; padding: 0.75em 1.25em;
+  background: var(--luz); color: var(--noche);
+  font-weight: 800; text-decoration: none;
+}
+.saltar:focus { top: var(--espacio); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   3. ATMÓSFERA
+   Capa fija con el resplandor del amanecer. Su opacidad sube
+   a medida que scrolleás: scrollear = que pase el tiempo.
+   Corre en el compositor, sin JavaScript.
+   ============================================================ */
+.atmosfera {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.25;
+  background:
+    radial-gradient(120% 65% at 50% 118%, var(--alba) 0%, transparent 62%),
+    radial-gradient(140% 80% at 50% 128%, var(--horizonte) 0%, transparent 70%);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .atmosfera {
+      animation: amanecer linear both;
+      animation-timeline: scroll(root block);
+    }
+    @keyframes amanecer {
+      from { opacity: 0;   }
+      to   { opacity: 0.9; }
+    }
+  }
+}
+
+/* Todo el contenido va por encima de la atmósfera. */
+.sitio { position: relative; z-index: 1; }
+
+/* ============================================================
+   4. HERO
+   ============================================================ */
+.hero {
+  min-height: 100svh;   /* svh, no vh: descuenta la barra del navegador en mobile */
+  display: grid;
+  overflow: hidden;
+}
+
+/* Los tres hijos comparten la misma celda: se apilan sin
+   position:absolute y sin pelear con z-index. */
+.hero > * { grid-area: 1 / 1; }
+
+.hero__cielo {
+  background: linear-gradient(
+    to top,
+    var(--alba)        0%,
+    var(--horizonte)  14%,
+    var(--cielo)      40%,
+    var(--medianoche) 72%,
+    var(--noche)     100%
+  );
+}
+
+.hero__skyline {
+  align-self: end;
+  width: 100%;
+  height: min(42vh, 340px);
+}
+
+.hero__contenido {
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+  padding: var(--espacio);
+  padding-bottom: min(30vh, 240px);
+  max-width: 62rem;
+}
+
+.hero__eyebrow {
+  font-family: var(--mono);
+  font-size: clamp(0.65rem, 1.6vw, 0.8rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--luz);
+  opacity: 0.75;
+  margin-bottom: calc(var(--espacio) * 0.75);
+}
+
+/* --- Título: todo el tratamiento vive en el eje de ancho de Archivo.
+       Condensado + pesado arriba, abierto + liviano abajo. --- */
+.hero__titulo { display: flex; flex-direction: column; line-height: 0.82; }
+
+.hero__titulo-a {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 62.5, 'wght' 900;
+  font-size: clamp(3.5rem, 15vw, 11rem);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.hero__titulo-b {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 110, 'wght' 400;
+  font-size: clamp(0.9rem, 3.4vw, 2.4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;      /* compensa el tracking del último caracter */
+  color: var(--alba);
+  margin-top: 0.7em;
+}
+
+/* ============================================================
+   5. COUNTDOWN — el elemento firma
+   Monoespaciada por motivo funcional: todos los dígitos miden
+   igual, así que pasar de 09 a 10 no mueve el layout.
+   ============================================================ */
+.cuenta {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(0.75rem, 3vw, 2rem);
+  margin-top: calc(var(--espacio) * 1.75);
+}
+
+.cuenta__unidad { display: flex; flex-direction: column; align-items: center; min-width: 3.5ch; }
+
+.cuenta__numero {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.75rem, 6vw, 3.5rem);
+  line-height: 1;
+}
+
+.cuenta__label {
+  font-weight: 600;
+  font-size: clamp(0.55rem, 1.5vw, 0.7rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--luz);
+  opacity: 0.7;
+  margin-top: 0.7em;
+}
+
+.cuenta__sep {
+  width: 1px;
+  height: clamp(1.75rem, 6vw, 3.5rem);
+  background: var(--luz);
+  opacity: 0.3;
+}
+
+/* Estado post-estreno: el countdown se reemplaza por esto. */
+.cuenta--estreno {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 75, 'wght' 800;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--alba);
+}
+
+/* ============================================================
+   6. BOTONES
+   ============================================================ */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: calc(var(--espacio) * 2);
+}
+
+.boton {
+  display: inline-block;
+  padding: 0.9em 2.2em;
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 85, 'wght' 700;
+  font-size: clamp(0.8rem, 1.9vw, 1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid var(--luz);
+  background: transparent;
+  color: var(--luz);
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.boton:hover, .boton:focus-visible { background: var(--luz); color: var(--noche); }
+
+.boton--solido { background: var(--luz); color: var(--noche); }
+.boton--solido:hover, .boton--solido:focus-visible {
+  background: var(--alba); border-color: var(--alba); color: var(--noche);
+}
+
+/* ============================================================
+   7. SECCIONES
+   ============================================================ */
+.bloque { width: var(--ancho); margin-inline: auto; padding-block: clamp(4rem, 12vh, 9rem); }
+
+.bloque__eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--alba);
+  margin-bottom: 1.5rem;
+}
+
+.bloque__titulo {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 70, 'wght' 800;
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.bloque__texto {
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  max-width: 44ch;
+  opacity: 0.85;
+}
+
+/* --- Revelado al scroll --- */
+.revelar {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+.revelar.visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .revelar { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   8. TRÁILER — patrón "facade"
+   El iframe de YouTube pesa cientos de KB y se carga aunque
+   nadie le dé play. Acá mostramos una portada liviana y el
+   iframe se inyecta recién al hacer click.
+   ============================================================ */
+.trailer {
+  position: relative;
+  aspect-ratio: 16 / 9;     /* reserva el espacio: cero layout shift */
+  width: 100%;
+  margin-top: 2.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(242, 237, 228, 0.15);
+  background:
+    radial-gradient(90% 120% at 50% 100%, var(--horizonte) 0%, transparent 65%),
+    linear-gradient(160deg, var(--medianoche), var(--noche));
+}
+
+.trailer__boton {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1rem;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--luz);
+  cursor: pointer;
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 85, 'wght' 700;
+  font-size: clamp(0.75rem, 1.8vw, 0.95rem);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.trailer__icono {
+  width: clamp(56px, 9vw, 84px);
+  height: clamp(56px, 9vw, 84px);
+  border: 2px solid var(--luz);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: background 220ms ease, transform 220ms ease;
+}
+
+.trailer__boton:hover .trailer__icono,
+.trailer__boton:focus-visible .trailer__icono {
+  background: var(--alba);
+  border-color: var(--alba);
+  transform: scale(1.06);
+}
+
+.trailer__icono svg { width: 38%; fill: var(--luz); margin-left: 12%; }
+.trailer__boton:hover .trailer__icono svg { fill: var(--noche); }
+
+.trailer iframe { width: 100%; height: 100%; border: 0; }
+
+/* ============================================================
+   9. FRANJA DE ESTRENO
+   ============================================================ */
+.estreno {
+  text-align: center;
+  padding-block: clamp(5rem, 16vh, 11rem);
+  border-top: 1px solid rgba(242, 237, 228, 0.12);
+}
+
+.estreno__fecha {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 62.5, 'wght' 900;
+  font-size: clamp(4rem, 22vw, 16rem);
+  line-height: 0.8;
+  text-transform: uppercase;
+}
+
+.estreno__mes {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 115, 'wght' 400;
+  font-size: clamp(1rem, 3.5vw, 2rem);
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  text-transform: uppercase;
+  color: var(--alba);
+  margin-top: 1rem;
+}
+
+/* ============================================================
+   10. PIE
+   ============================================================ */
+.pie {
+  width: var(--ancho);
+  margin-inline: auto;
+  padding-block: 3rem 4rem;
+  border-top: 1px solid rgba(242, 237, 228, 0.12);
+  font-size: 0.82rem;
+  color: var(--luz-tenue);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+}
+</style>
+</head>
+<body>
+
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<div class="atmosfera" aria-hidden="true"></div>
+
+<div class="sitio">
+
+<main id="contenido">
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+
+    <div class="hero__cielo" aria-hidden="true"></div>
+
+    <!-- Skyline: geometría propia, sin assets externos. Un request menos. -->
+    <svg class="hero__skyline" viewBox="0 0 1200 300"
+         preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <g fill="var(--noche)">
+        <rect x="0"    y="185" width="85"  height="115"/>
+        <rect x="70"   y="145" width="60"  height="155"/>
+        <rect x="120"  y="215" width="95"  height="85"/>
+        <rect x="200"  y="110" width="70"  height="190"/>
+        <rect x="255"  y="165" width="80"  height="135"/>
+        <rect x="325"  y="75"  width="55"  height="225"/>
+        <rect x="370"  y="195" width="105" height="105"/>
+        <rect x="460"  y="140" width="65"  height="160"/>
+        <rect x="515"  y="205" width="90"  height="95"/>
+        <rect x="590"  y="95"  width="75"  height="205"/>
+        <rect x="655"  y="170" width="60"  height="130"/>
+        <rect x="705"  y="225" width="110" height="75"/>
+        <rect x="800"  y="130" width="70"  height="170"/>
+        <rect x="860"  y="190" width="85"  height="110"/>
+        <rect x="935"  y="60"  width="50"  height="240"/>
+        <rect x="955"  y="20"  width="6"   height="45"/>
+        <rect x="975"  y="155" width="80"  height="145"/>
+        <rect x="1045" y="210" width="95"  height="90"/>
+        <rect x="1125" y="165" width="75"  height="135"/>
+      </g>
+      <!-- Una sola ventana encendida. Alguien está despierto al amanecer. -->
+      <rect x="345" y="115" width="9" height="13" fill="var(--alba)"/>
+    </svg>
+
+    <div class="hero__contenido">
+      <p class="hero__eyebrow">Solo en cines &middot; 29 de julio</p>
+
+      <h1 class="hero__titulo">
+        <span class="hero__titulo-a">Spider-Man</span>
+        <span class="hero__titulo-b">Brand New Day</span>
+      </h1>
+
+      <!-- El contador es decorativo para lectores de pantalla: anunciar
+           "42 segundos... 41 segundos..." indefinidamente es inutilizable.
+           La información real va en el texto de abajo. -->
+      <div class="cuenta" id="cuenta" aria-hidden="true">
+        <div class="cuenta__unidad">
+          <span class="cuenta__numero" data-dias>--</span>
+          <span class="cuenta__label">días</span>
+        </div>
+        <div class="cuenta__sep"></div>
+        <div class="cuenta__unidad">
+          <span class="cuenta__numero" data-horas>--</span>
+          <span class="cuenta__label">horas</span>
+        </div>
+        <div class="cuenta__sep"></div>
+        <div class="cuenta__unidad">
+          <span class="cuenta__numero" data-minutos>--</span>
+          <span class="cuenta__label">min</span>
+        </div>
+        <div class="cuenta__sep"></div>
+        <div class="cuenta__unidad">
+          <span class="cuenta__numero" data-segundos>--</span>
+          <span class="cuenta__label">seg</span>
+        </div>
+      </div>
+
+      <p class="sr-only">El estreno es el 29 de julio de 2026.</p>
+
+      <div class="acciones">
+        <a href="#trailer" class="boton boton--solido">Ver el tráiler</a>
+        <button type="button" class="boton" data-calendario>Añadir al calendario</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========== TEASER ========== -->
+  <section class="bloque">
+    <p class="bloque__eyebrow revelar">La noche termina</p>
+    <h2 class="bloque__titulo revelar">Toda ciudad<br>amanece</h2>
+    <!-- La sinopsis oficial entra acá cuando llega el press kit. -->
+    <p class="bloque__texto revelar">
+      Nueva York no duerme: espera. Y cuando el sol pega en el primer
+      rascacielos, alguien ya está en el aire.
+    </p>
+  </section>
+
+  <!-- ========== TRÁILER ========== -->
+  <section class="bloque" id="trailer">
+    <p class="bloque__eyebrow revelar">Tráiler oficial</p>
+    <h2 class="bloque__titulo revelar">Mirá</h2>
+
+    <div class="trailer revelar" id="trailer-caja">
+      <button type="button" class="trailer__boton" id="trailer-play"
+              aria-label="Reproducir el tráiler de Spider-Man: Brand New Day">
+        <span class="trailer__icono" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        <span>Reproducir tráiler</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========== ESTRENO ========== -->
+  <section class="estreno">
+    <p class="estreno__fecha">29</p>
+    <p class="estreno__mes">Julio</p>
+    <div class="acciones">
+      <button type="button" class="boton boton--solido" data-calendario>Añadir al calendario</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <p>Proyecto de portfolio &middot; HTML, CSS y JavaScript sin dependencias</p>
+  <p>No afiliado a Sony Pictures ni a Marvel. Marcas y personajes pertenecen a sus titulares.</p>
+</footer>
+
+</div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   COUNTDOWN
+
+   La fecha lleva zona horaria explícita (+02:00 = Madrid en
+   verano). Sin eso, cada visitante vería una fecha distinta
+   según dónde esté: vos en Argentina (UTC-3) verías otra cosa
+   que alguien en España.
+   ============================================================ */
+const ESTRENO = new Date('2026-07-29T00:00:00+02:00');
+
+const cuenta = document.getElementById('cuenta');
+const campos = {
+  dias:     cuenta.querySelector('[data-dias]'),
+  horas:    cuenta.querySelector('[data-horas]'),
+  minutos:  cuenta.querySelector('[data-minutos]'),
+  segundos: cuenta.querySelector('[data-segundos]')
+};
+
+const dosDigitos = (n) => String(n).padStart(2, '0');
+
+let reloj;
+
+function actualizarCuenta() {
+  // Recalculamos desde el reloj real en cada tick, en vez de
+  // restar 1 segundo. Si la pestaña se va a segundo plano el
+  // navegador ralentiza el intervalo, y restando acumularías error.
+  const restante = ESTRENO - Date.now();
+
+  if (restante <= 0) {
+    cuenta.className = 'cuenta cuenta--estreno';
+    cuenta.textContent = 'Ya en cines';
+    clearInterval(reloj);          // el contador terminó: paramos
+    return;
+  }
+
+  const segundosTotales = Math.floor(restante / 1000);
+
+  campos.dias.textContent     = dosDigitos(Math.floor(segundosTotales / 86400));
+  campos.horas.textContent    = dosDigitos(Math.floor(segundosTotales / 3600) % 24);
+  campos.minutos.textContent  = dosDigitos(Math.floor(segundosTotales / 60) % 60);
+  campos.segundos.textContent = dosDigitos(segundosTotales % 60);
+}
+
+actualizarCuenta();                    // pintamos ya, sin esperar 1 segundo
+reloj = setInterval(actualizarCuenta, 1000);
+
+
+/* ============================================================
+   REVELADO AL SCROLL
+
+   IntersectionObserver en lugar de escuchar el evento 'scroll':
+   el navegador avisa cuando el elemento entra en pantalla, sin
+   que corramos código en cada pixel scrolleado.
+   ============================================================ */
+const observador = new IntersectionObserver((entradas) => {
+  for (const entrada of entradas) {
+    if (!entrada.isIntersecting) continue;
+    entrada.target.classList.add('visible');
+    observador.unobserve(entrada.target);   // ya se reveló: dejamos de observarlo
+  }
+}, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.revelar').forEach((el) => observador.observe(el));
+
+
+/* ============================================================
+   TRÁILER — facade
+
+   El iframe se crea recién al hacer click. Antes de eso, la
+   página no le pide absolutamente nada a YouTube.
+   ============================================================ */
+const VIDEO_ID = 'REEMPLAZAR_CON_ID';   // ← el ID del tráiler oficial
+
+document.getElementById('trailer-play').addEventListener('click', () => {
+  const caja = document.getElementById('trailer-caja');
+  const iframe = document.createElement('iframe');
+
+  iframe.src = 'https://www.youtube-nocookie.com/embed/' + VIDEO_ID + '?autoplay=1&rel=0';
+  iframe.title = 'Tráiler de Spider-Man: Brand New Day';
+  iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+  iframe.allowFullscreen = true;
+
+  caja.replaceChildren(iframe);
+});
+
+
+/* ============================================================
+   AÑADIR AL CALENDARIO
+
+   Generamos un archivo .ics en el navegador con Blob. Sin
+   backend, sin librería, sin depender de Google Calendar.
+   ============================================================ */
+function descargarEvento() {
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//landing-spiderman//ES',
+    'BEGIN:VEVENT',
+    'UID:estreno-bnd-' + Date.now() + '@landing',
+    'DTSTART;VALUE=DATE:20260729',
+    'DTEND;VALUE=DATE:20260730',
+    'SUMMARY:SPIDER-MAN: Brand New Day — Estreno',
+    'DESCRIPTION:Estreno en cines.',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');   // el formato .ics exige saltos CRLF
+
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'spiderman-brand-new-day.ics';
+  a.click();
+  URL.revokeObjectURL(url);   // liberamos la memoria
+}
+
+document.querySelectorAll('[data-calendario]').forEach((boton) => {
+  boton.addEventListener('click', descargarEvento);
+});
+</script>
+
+</body>
+</html>

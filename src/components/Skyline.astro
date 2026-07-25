@@ -1,0 +1,108 @@
+---
+/**
+ * Skyline de Nueva York dibujado con geometría propia.
+ *
+ * Cero assets externos: ni una imagen que descargar, ni un request extra, y
+ * escala perfecto en cualquier pantalla porque son rectángulos, no pixeles.
+ * Dos planos a distinta opacidad dan profundidad sin coste.
+ */
+---
+
+<svg
+  class="skyline"
+  viewBox="0 0 1200 300"
+  preserveAspectRatio="xMidYMax slice"
+  aria-hidden="true"
+  focusable="false"
+>
+  <!-- Plano de fondo: más lejos, más lavado por la bruma del amanecer. -->
+  <g class="skyline__fondo">
+    <rect x="30" y="205" width="120" height="95"></rect>
+    <rect x="180" y="175" width="90" height="125"></rect>
+    <rect x="300" y="150" width="70" height="150"></rect>
+    <rect x="420" y="190" width="110" height="110"></rect>
+    <rect x="560" y="160" width="85" height="140"></rect>
+    <rect x="690" y="185" width="100" height="115"></rect>
+    <rect x="820" y="145" width="75" height="155"></rect>
+    <rect x="930" y="195" width="120" height="105"></rect>
+    <rect x="1080" y="170" width="95" height="130"></rect>
+  </g>
+
+  <!-- Plano delantero: la silueta nítida contra el cielo. -->
+  <g class="skyline__frente">
+    <rect x="0" y="185" width="85" height="115"></rect>
+    <rect x="70" y="145" width="60" height="155"></rect>
+    <rect x="120" y="215" width="95" height="85"></rect>
+    <rect x="200" y="110" width="70" height="190"></rect>
+    <rect x="255" y="165" width="80" height="135"></rect>
+    <rect x="325" y="75" width="55" height="225"></rect>
+    <rect x="370" y="195" width="105" height="105"></rect>
+    <rect x="460" y="140" width="65" height="160"></rect>
+    <rect x="515" y="205" width="90" height="95"></rect>
+    <rect x="590" y="95" width="75" height="205"></rect>
+    <rect x="655" y="170" width="60" height="130"></rect>
+    <rect x="705" y="225" width="110" height="75"></rect>
+    <rect x="800" y="130" width="70" height="170"></rect>
+    <rect x="860" y="190" width="85" height="110"></rect>
+    <rect x="935" y="60" width="50" height="240"></rect>
+    <rect x="955" y="20" width="6" height="45"></rect>
+    <rect x="975" y="155" width="80" height="145"></rect>
+    <rect x="1045" y="210" width="95" height="90"></rect>
+    <rect x="1125" y="165" width="75" height="135"></rect>
+  </g>
+
+  <!-- Una sola ventana encendida. Alguien ya está despierto. -->
+  <rect class="skyline__ventana" x="345" y="115" width="9" height="13"></rect>
+
+  <!-- Telaraña tendida entre dos torres. El detalle que cuenta de quién es la ciudad. -->
+  <g class="skyline__tela">
+    <path d="M335 95 L590 118"></path>
+    <path d="M335 95 L462 155 L590 118"></path>
+    <path d="M335 95 L470 133 L590 118"></path>
+    <path d="M355 103 L448 141"></path>
+    <path d="M380 110 L462 155"></path>
+  </g>
+</svg>
+
+<style>
+  .skyline {
+    width: 100%;
+    height: 100%;
+  }
+
+  .skyline__frente {
+    fill: var(--noche);
+  }
+
+  .skyline__fondo {
+    fill: var(--noche);
+    opacity: 0.45;
+  }
+
+  .skyline__ventana {
+    fill: var(--alba);
+  }
+
+  .skyline__tela {
+    stroke: var(--alba);
+    stroke-width: 1;
+    fill: none;
+    opacity: 0.35;
+  }
+
+  /* El parpadeo lentísimo de la ventana: presencia, no distracción. */
+  @media (prefers-reduced-motion: no-preference) {
+    .skyline__ventana {
+      animation: vela 5s ease-in-out infinite;
+    }
+    @keyframes vela {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.45;
+      }
+    }
+  }
+</style>

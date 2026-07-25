@@ -1,0 +1,87 @@
+---
+const CIFRAS = [
+  { valor: '29.07', etiqueta: 'Estreno mundial' },
+  { valor: 'IMAX', etiqueta: 'Rodada para pantalla grande' },
+  { valor: '2026', etiqueta: 'Fase seis' },
+];
+---
+
+<section class="bloque sinopsis" id="sinopsis">
+  <div class="sinopsis__texto">
+    <p class="eyebrow revelar">La noche termina</p>
+    <h2 class="titulo-seccion revelar" data-retraso="1">
+      Toda ciudad<br />amanece
+    </h2>
+
+    {/* Sustituir por la sinopsis oficial cuando llegue el press kit. */}
+    <p class="parrafo revelar" data-retraso="2">
+      Nueva York no duerme: espera. Peter Parker tampoco. Después de perderlo
+      todo — el nombre, la gente, el sitio al que volver — arranca de cero en
+      una ciudad que ya no sabe quién es.
+    </p>
+    <p class="parrafo revelar" data-retraso="3">
+      Y cuando el sol pega en el primer rascacielos, alguien ya está en el aire.
+    </p>
+  </div>
+
+  <ul class="sinopsis__cifras">
+    {
+      CIFRAS.map((cifra, i) => (
+        <li class="cifra revelar" data-retraso={String(i + 1)}>
+          <p class="cifra__valor">{cifra.valor}</p>
+          <p class="cifra__etiqueta">{cifra.etiqueta}</p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .sinopsis {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .sinopsis {
+      grid-template-columns: 1.35fr 1fr;
+    }
+  }
+
+  .sinopsis__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+  }
+
+  .sinopsis__cifras {
+    list-style: none;
+    display: grid;
+    gap: 1px;
+    background: var(--borde);
+    border: 1px solid var(--borde);
+  }
+
+  .cifra {
+    padding: clamp(1.25rem, 3vw, 1.9rem);
+    background: var(--noche);
+  }
+
+  .cifra__valor {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 75, 'wght' 800;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--alba);
+  }
+
+  .cifra__etiqueta {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--luz-tenue);
+    margin-top: 0.5rem;
+  }
+</style>

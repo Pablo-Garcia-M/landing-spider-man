@@ -1,0 +1,53 @@
+---
+const anio = 2026;
+---
+
+<footer class="pie">
+  <div class="pie__interior">
+    <div>
+      <p class="pie__marca">Spider-Man: Brand New Day</p>
+      <p class="pie__linea">
+        Proyecto de portfolio construido con Astro, React, HTML, CSS y
+        JavaScript.
+      </p>
+    </div>
+
+    <p class="pie__legal">
+      No afiliado a Sony Pictures ni a Marvel. Las marcas, personajes y
+      material promocional pertenecen a sus titulares. &copy; {anio}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    border-top: 1px solid var(--borde);
+  }
+
+  .pie__interior {
+    width: var(--ancho);
+    margin-inline: auto;
+    padding-block: 3rem 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    font-size: 0.82rem;
+    color: var(--luz-tenue);
+  }
+
+  .pie__marca {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 80, 'wght' 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--luz);
+    margin-bottom: 0.5rem;
+  }
+
+  .pie__linea,
+  .pie__legal {
+    max-width: 44ch;
+  }
+</style>

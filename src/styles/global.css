@@ -1,0 +1,636 @@
+/* ============================================================================
+   SPIDER-MAN: BRAND NEW DAY — sistema visual
+   ----------------------------------------------------------------------------
+   Este archivo contiene sólo lo compartido: tokens, reset, tipografía,
+   utilidades y los primitivos (botón, sección, revelado). El estilo propio de
+   cada componente .astro vive dentro del componente, con scope automático.
+   Las islas de React sí se estilan desde acá: el scope de Astro no cruza el
+   límite del framework, así que sus clases necesitan ser globales.
+   ========================================================================== */
+
+/* ----------------------------------------------------------------------------
+   1. TOKENS
+   Un amanecer sobre Nueva York, de la noche cerrada al primer naranja.
+   -------------------------------------------------------------------------- */
+:root {
+  --noche: #0b1026;
+  --medianoche: #131a3a;
+  --cielo: #2b4c8c;
+  --horizonte: #c41e3a;
+  --alba: #ff6b35;
+
+  --luz: #f2ede4;
+  --luz-tenue: #8b90a8;
+
+  /* Superficies translúcidas: siempre derivadas de --luz para que un cambio
+     de paleta se propague sin buscar rgba() sueltos por el proyecto. */
+  --velo-01: rgb(242 237 228 / 0.04);
+  --velo-02: rgb(242 237 228 / 0.08);
+  --borde: rgb(242 237 228 / 0.14);
+  --borde-fuerte: rgb(242 237 228 / 0.28);
+
+  --display: 'Archivo', system-ui, sans-serif;
+  --texto: 'Manrope', system-ui, sans-serif;
+  --mono: 'Space Mono', ui-monospace, monospace;
+
+  --espacio: clamp(1rem, 3vw, 2rem);
+  --ancho: min(72rem, 92vw);
+  --ancho-nav: min(80rem, 94vw);
+
+  --transicion: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --altura-nav: 4.25rem;
+}
+
+/* ----------------------------------------------------------------------------
+   2. RESET Y BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* El ancla no queda tapada por la barra fija. */
+  scroll-padding-top: calc(var(--altura-nav) + 1rem);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--noche);
+  color: var(--luz);
+  font-family: var(--texto);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+iframe,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--alba);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--alba);
+  color: var(--noche);
+}
+
+/* Quien pidió menos movimiento recibe menos movimiento. No es un extra. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   3. UTILIDADES
+   -------------------------------------------------------------------------- */
+
+/* Invisible en pantalla, presente para el lector de pantalla. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.saltar {
+  position: absolute;
+  top: -100%;
+  left: var(--espacio);
+  z-index: 200;
+  padding: 0.75em 1.25em;
+  background: var(--luz);
+  color: var(--noche);
+  font-weight: 800;
+  text-decoration: none;
+}
+.saltar:focus {
+  top: var(--espacio);
+}
+
+/* Revelado al entrar en pantalla. Lo activa un IntersectionObserver global. */
+.revelar {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.revelar.visible {
+  opacity: 1;
+  transform: none;
+}
+/* Escalonado: cada hijo entra un pelo después que el anterior. */
+.revelar[data-retraso='1'] { transition-delay: 90ms; }
+.revelar[data-retraso='2'] { transition-delay: 180ms; }
+.revelar[data-retraso='3'] { transition-delay: 270ms; }
+.revelar[data-retraso='4'] { transition-delay: 360ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .revelar {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   4. TIPOGRAFÍA DE MARCA
+   Todo el tratamiento del display vive en el eje de ancho de Archivo:
+   condensado y pesado para gritar, expandido y liviano para respirar.
+   -------------------------------------------------------------------------- */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--alba);
+}
+
+.titulo-seccion {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 70, 'wght' 800;
+  font-size: clamp(2.1rem, 7vw, 4.5rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+.parrafo {
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  color: var(--luz);
+  opacity: 0.82;
+  max-width: 58ch;
+}
+
+/* ----------------------------------------------------------------------------
+   5. SECCIÓN
+   -------------------------------------------------------------------------- */
+.bloque {
+  width: var(--ancho);
+  margin-inline: auto;
+  padding-block: clamp(4rem, 11vh, 8.5rem);
+}
+
+.bloque__cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+/* ----------------------------------------------------------------------------
+   6. BOTONES
+   -------------------------------------------------------------------------- */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  padding: 0.9em 2em;
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 85, 'wght' 700;
+  font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 2px solid var(--luz);
+  background: transparent;
+  color: var(--luz);
+  transition:
+    background var(--transicion),
+    color var(--transicion),
+    border-color var(--transicion),
+    transform var(--transicion);
+}
+
+.boton:hover,
+.boton:focus-visible {
+  background: var(--luz);
+  color: var(--noche);
+}
+
+.boton:active {
+  transform: translateY(1px);
+}
+
+.boton--solido {
+  background: var(--luz);
+  color: var(--noche);
+}
+.boton--solido:hover,
+.boton--solido:focus-visible {
+  background: var(--alba);
+  border-color: var(--alba);
+  color: var(--noche);
+}
+
+.boton--fantasma {
+  border-color: var(--borde-fuerte);
+}
+
+.boton[disabled],
+.boton[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.boton[disabled]:hover,
+.boton[aria-disabled='true']:hover {
+  background: transparent;
+  color: var(--luz);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+/* ============================================================================
+   ISLAS DE REACT
+   Estilos globales porque el scope de Astro no cruza a otro framework.
+   Prefijo por componente para que sigan siendo legibles como un módulo.
+   ========================================================================== */
+
+/* ----------------------------------------------------------------------------
+   R1. CUENTA ATRÁS
+   Monoespaciada por motivo funcional, no estético: todos los dígitos miden
+   igual, así que pasar de 09 a 10 no empuja el layout un pixel.
+   -------------------------------------------------------------------------- */
+.cuenta {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(0.7rem, 2.6vw, 1.9rem);
+  margin-top: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.cuenta__unidad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3.4ch;
+}
+
+.cuenta__numero {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.7rem, 5.5vw, 3.4rem);
+  line-height: 1;
+  color: var(--luz);
+}
+
+.cuenta__label {
+  font-weight: 600;
+  font-size: clamp(0.53rem, 1.4vw, 0.68rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-top: 0.75em;
+}
+
+.cuenta__sep {
+  width: 1px;
+  height: clamp(1.7rem, 5.5vw, 3.4rem);
+  background: var(--luz);
+  opacity: 0.25;
+}
+
+/* Estado post-estreno: el contador se retira y deja el mensaje. */
+.cuenta--estreno {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 75, 'wght' 800;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--alba);
+}
+
+/* ----------------------------------------------------------------------------
+   R2. TRÁILER (patrón facade)
+   -------------------------------------------------------------------------- */
+.trailer {
+  position: relative;
+  /* Reserva el hueco antes de cargar nada: cero layout shift, CLS a cero. */
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  background:
+    radial-gradient(75% 95% at 50% 108%, var(--horizonte) 0%, transparent 62%),
+    linear-gradient(160deg, var(--medianoche), var(--noche));
+}
+
+.trailer__boton {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1.1rem;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--luz);
+  cursor: pointer;
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 85, 'wght' 700;
+  font-size: clamp(0.72rem, 1.6vw, 0.9rem);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.trailer__boton[disabled] {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.trailer__icono {
+  width: clamp(56px, 8vw, 82px);
+  height: clamp(56px, 8vw, 82px);
+  border: 2px solid var(--luz);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition:
+    background var(--transicion),
+    border-color var(--transicion),
+    transform var(--transicion);
+}
+
+.trailer__icono svg {
+  width: 36%;
+  fill: var(--luz);
+  transition: fill var(--transicion);
+}
+.trailer__icono--play svg {
+  margin-left: 12%;
+}
+
+.trailer__boton:not([disabled]):hover .trailer__icono,
+.trailer__boton:focus-visible .trailer__icono {
+  background: var(--alba);
+  border-color: var(--alba);
+  transform: scale(1.06);
+}
+.trailer__boton:not([disabled]):hover .trailer__icono svg {
+  fill: var(--noche);
+}
+
+.trailer__nota {
+  font-family: var(--texto);
+  font-variation-settings: normal;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.6;
+  max-width: 30ch;
+  text-align: center;
+}
+
+.trailer iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Estado de repuesto cuando la isla de React falla en pleno render (ver
+   ErrorBoundary.jsx). Clase en vez de style="" inline: bajo la CSP con
+   hashes automáticos de Astro, un atributo style="" necesitaría
+   'unsafe-inline' en style-src, que es justo lo que la CSP existe para evitar. */
+.trailer--fallback {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+/* ----------------------------------------------------------------------------
+   R3. BOTÓN DE CALENDARIO (menú)
+   -------------------------------------------------------------------------- */
+.cal {
+  position: relative;
+  display: inline-block;
+}
+
+.cal__menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 50;
+  min-width: 15rem;
+  padding: 0.4rem;
+  list-style: none;
+  background: var(--medianoche);
+  border: 1px solid var(--borde);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 0.55);
+}
+
+/* Cerca del borde derecho el menú se ancla al otro lado y no desborda. */
+.cal--derecha .cal__menu {
+  left: auto;
+  right: 0;
+}
+
+.cal__opcion {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border: 0;
+  background: transparent;
+  color: var(--luz);
+  font-size: 0.9rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transicion);
+}
+.cal__opcion:hover,
+.cal__opcion:focus-visible {
+  background: var(--velo-02);
+}
+
+.cal__icono {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+  fill: none;
+  stroke: var(--alba);
+  stroke-width: 1.6;
+}
+
+.cal__flecha {
+  width: 0.7em;
+  height: 0.7em;
+  fill: currentColor;
+  transition: transform var(--transicion);
+}
+.cal[data-abierto='true'] .cal__flecha {
+  transform: rotate(180deg);
+}
+
+.cal__fallback {
+  margin: 0;
+}
+
+.cal__aviso {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  color: var(--alba);
+}
+
+/* ----------------------------------------------------------------------------
+   R4. SESIONES
+   -------------------------------------------------------------------------- */
+.sesiones__ciudades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.sesiones__ciudad {
+  padding: 0.55em 1.3em;
+  border: 1px solid var(--borde);
+  background: transparent;
+  color: var(--luz);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background var(--transicion),
+    border-color var(--transicion),
+    color var(--transicion);
+}
+.sesiones__ciudad:hover {
+  border-color: var(--borde-fuerte);
+  background: var(--velo-01);
+}
+.sesiones__ciudad[aria-selected='true'],
+.sesiones__ciudad[data-activo='true'] {
+  background: var(--luz);
+  border-color: var(--luz);
+  color: var(--noche);
+}
+
+.sesiones__lista {
+  display: grid;
+  gap: 1px;
+  background: var(--borde);
+  border: 1px solid var(--borde);
+}
+
+.sesion {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem 1.5rem;
+  align-items: center;
+  padding: clamp(1.1rem, 2.5vw, 1.6rem);
+  background: var(--noche);
+}
+
+@media (max-width: 44rem) {
+  .sesion {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sesion__cine {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 90, 'wght' 700;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  line-height: 1.2;
+}
+
+.sesion__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--luz-tenue);
+}
+
+.sesion__formato {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.25em 0.6em;
+  border: 1px solid var(--borde-fuerte);
+  color: var(--alba);
+}
+
+.sesion__horas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.sesion__hora {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+  padding: 0.5em 0.9em;
+  border: 1px solid var(--borde-fuerte);
+  background: transparent;
+  color: var(--luz);
+  cursor: pointer;
+  transition:
+    background var(--transicion),
+    color var(--transicion),
+    border-color var(--transicion);
+}
+.sesion__hora:hover,
+.sesion__hora:focus-visible {
+  background: var(--alba);
+  border-color: var(--alba);
+  color: var(--noche);
+}
+
+.sesiones__aviso {
+  margin-top: 1.25rem;
+  font-size: 0.78rem;
+  color: var(--luz-tenue);
+}

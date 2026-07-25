@@ -1,0 +1,132 @@
+---
+import '../styles/fuentes.css';
+import '../styles/global.css';
+import archivoUrl from '../fonts/archivo-variable.woff2?url';
+import { PELICULA } from '../data/pelicula.js';
+
+// Props opcionales: { titulo, descripcion }. Si no llegan, se usan los
+// valores por defecto de abajo, que es el caso de la home.
+const {
+  titulo = `${PELICULA.tituloCompleto} — ${PELICULA.estrenoLargo}, solo en cines`,
+  descripcion = PELICULA.descripcion,
+} = Astro.props;
+
+/**
+ * `import.meta.env.BASE_URL` siempre termina en "/" y vale "/" a secas si no
+ * hay `base` configurado, o "/landing-spider-man/" en GitHub Pages. Todo lo
+ * que vive en public/ (favicon, og.png...) hay que prefijarlo a mano: Astro
+ * sólo reescribe con el base las rutas que él procesa (imports, CSS), no un
+ * href="/algo" escrito literal en el HTML.
+ */
+// .replace() en ambos lados: no confiamos en que BASE_URL termine en "/" ni
+// en que `ruta` no empiece con una, así siempre queda exactamente una barra
+// entre el base y el archivo, sin importar cómo esté escrito cualquiera de los dos.
+const base = import.meta.env.BASE_URL;
+const conBase = (ruta) => `${base.replace(/\/$/, '')}/${ruta.replace(/^\//, '')}`;
+
+// URL absoluta: las tarjetas de WhatsApp, X y Slack no resuelven rutas relativas.
+const canonica = new URL(Astro.url.pathname, Astro.site);
+const ogImagen = new URL(conBase('og.png'), Astro.site);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    <meta name="theme-color" content="#0B1026" />
+
+    <link rel="icon" href={conBase('favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={conBase('favicon.ico')} sizes="32x32" />
+    <link rel="apple-touch-icon" href={conBase('apple-touch-icon.png')} />
+    <link rel="sitemap" href={conBase('sitemap-index.xml')} />
+
+    {/* Cómo se ve el enlace cuando alguien lo comparte. */}
+    <meta property="og:type" content="video.movie" />
+    <meta property="og:site_name" content={PELICULA.tituloCompleto} />
+    <meta property="og:title" content={PELICULA.tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={ogImagen} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={PELICULA.tituloCompleto} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={ogImagen} />
+
+    {/*
+      La variable de Archivo es la fuente del título del hero: lo primero que
+      pinta la página. Precargarla evita que el navegador la descubra recién
+      al parsear el CSS, un paso más tarde de lo necesario.
+    */}
+    <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
+
+    {/*
+      Datos estructurados: Google entiende que esto es una película.
+
+      El reemplazo de "<" evita que un valor con "</script>" dentro (por
+      ejemplo, si algún día PELICULA.director sale de un CMS y no de un
+      archivo local de confianza) cierre la etiqueta antes de tiempo y
+      inyecte HTML arbitrario en la página. JSON.stringify no protege de eso
+      por sí solo: escapa para contexto JS, no para contexto HTML.
+    */}
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Movie',
+        name: PELICULA.tituloCompleto,
+        datePublished: '2026-07-29',
+        inLanguage: 'es',
+        director: { '@type': 'Person', name: PELICULA.director },
+        url: canonica.href,
+        image: ogImagen.href,
+      }).replace(/</g, '\\u003c')}
+    />
+  </head>
+
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <slot />
+
+    <script>
+      /**
+       * Revelado al scroll, una sola vez para toda la página.
+       *
+       * IntersectionObserver en lugar del evento 'scroll': el navegador avisa
+       * cuando el elemento cruza el umbral, en vez de ejecutar código nuestro
+       * en cada pixel scrolleado. Y en cuanto un elemento se revela dejamos de
+       * observarlo, así el observer se vacía solo a medida que bajás.
+       */
+      const objetivos = document.querySelectorAll('.revelar');
+
+      const prefiereQuietud = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      if (prefiereQuietud || !('IntersectionObserver' in window)) {
+        objetivos.forEach((el) => el.classList.add('visible'));
+      } else {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue;
+              entrada.target.classList.add('visible');
+              observador.unobserve(entrada.target);
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
+        );
+
+        objetivos.forEach((el) => observador.observe(el));
+      }
+    </script>
+  </body>
+</html>

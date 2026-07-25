@@ -1,0 +1,62 @@
+# Compila el sitio y lo publica en GitHub Pages.
+#
+# GitHub Pages, a diferencia de Netlify, no sabe qué es Astro ni corre
+# "npm run build" solo: sólo sabe servir archivos estáticos. Este workflow es
+# la pieza que falta — corre en los servidores de GitHub cada vez que se
+# sube algo a "main", genera dist/ y lo publica. Es gratis y no hace falta
+# ninguna cuenta aparte de la de GitHub.
+name: Desplegar a GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Permite lanzarlo a mano desde la pestaña "Actions" del repo, sin esperar
+  # a un push nuevo.
+  workflow_dispatch:
+
+# Permisos mínimos que necesita el job para publicar en Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si se sube un segundo commit mientras el primero todavía está desplegando,
+# se cancela el despliegue viejo en vez de dejar dos corriendo a la vez.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código del repo
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el sitio
+        run: npm run build
+
+      - name: Preparar el resultado para Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

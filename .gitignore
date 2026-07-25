@@ -1,0 +1,34 @@
+# build
+dist/
+.astro/
+
+# deps
+node_modules/
+
+# entorno — nada de esto existe todavía (el sitio no usa variables de
+# entorno), pero si algún día se agrega una API real, acá se cortan solas.
+.env
+.env.*
+!.env.example
+
+# configuración de Claude Code específica de esta máquina (el sufijo
+# "local" es la misma convención que .env.local: no se comparte).
+.claude/settings.local.json
+
+# editor
+.vscode/
+.idea/
+
+# sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# logs
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# capturas que genera 'npm test'
+tests/capturas/

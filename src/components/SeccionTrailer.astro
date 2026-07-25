@@ -1,0 +1,24 @@
+---
+import Trailer from './react/Trailer.jsx';
+import { PELICULA } from '../data/pelicula.js';
+---
+
+<section class="bloque" id="trailer">
+  <div class="bloque__cabecera">
+    <p class="eyebrow revelar">Tráiler oficial</p>
+    <h2 class="titulo-seccion revelar" data-retraso="1">Miralo</h2>
+  </div>
+
+  <div class="revelar" data-retraso="2">
+    {/*
+      client:visible — no hay motivo para hidratar un reproductor que está
+      tres pantallas más abajo. Su JS se descarga cuando la sección entra en
+      pantalla, no antes.
+    */}
+    <Trailer
+      client:visible
+      videoId={PELICULA.trailerId}
+      titulo={PELICULA.tituloCompleto}
+    />
+  </div>
+</section>

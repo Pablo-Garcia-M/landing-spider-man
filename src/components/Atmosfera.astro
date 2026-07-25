@@ -1,0 +1,44 @@
+---
+/**
+ * Capa fija con el resplandor del amanecer.
+ *
+ * Su opacidad crece con el scroll: bajar por la página es que pase el tiempo y
+ * amanezca sobre la ciudad. Está atada a `animation-timeline: scroll()`, así
+ * que la anima el compositor sin una línea de JavaScript y sin un solo evento
+ * de scroll. Donde el navegador no lo soporta queda el degradado fijo, que ya
+ * se ve bien por sí solo: mejora progresiva, no dependencia.
+ */
+---
+
+<div class="atmosfera" aria-hidden="true"></div>
+
+<style>
+  .atmosfera {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.25;
+    background:
+      radial-gradient(120% 65% at 50% 118%, var(--alba) 0%, transparent 62%),
+      radial-gradient(140% 80% at 50% 128%, var(--horizonte) 0%, transparent 70%);
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .atmosfera {
+        animation: amanecer linear both;
+        animation-timeline: scroll(root block);
+      }
+
+      @keyframes amanecer {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 0.85;
+        }
+      }
+    }
+  }
+</style>

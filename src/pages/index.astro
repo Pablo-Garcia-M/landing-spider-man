@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import Atmosfera from '../components/Atmosfera.astro';
+import Navegacion from '../components/Navegacion.astro';
+import Hero from '../components/Hero.astro';
+import Sinopsis from '../components/Sinopsis.astro';
+import SeccionTrailer from '../components/SeccionTrailer.astro';
+import Reparto from '../components/Reparto.astro';
+import Sesiones from '../components/Sesiones.astro';
+import Estreno from '../components/Estreno.astro';
+import Faq from '../components/Faq.astro';
+import Pie from '../components/Pie.astro';
+---
+
+<Base>
+  <Atmosfera />
+  <Navegacion />
+
+  {/* Todo el contenido por encima de la capa de atmósfera. */}
+  <div class="sitio">
+    <main id="contenido">
+      <Hero />
+      <Sinopsis />
+      <SeccionTrailer />
+      <Reparto />
+      <Sesiones />
+      <Estreno />
+      <Faq />
+    </main>
+
+    <Pie />
+  </div>
+</Base>
+
+<style is:global>
+  .sitio {
+    position: relative;
+    z-index: 1;
+  }
+</style>

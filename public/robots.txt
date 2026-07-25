@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tu-usuario.github.io/landing-spider-man/sitemap-index.xml

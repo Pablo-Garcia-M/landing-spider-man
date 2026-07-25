@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import Atmosfera from '../components/Atmosfera.astro';
+import Skyline from '../components/Skyline.astro';
+---
+
+<Base
+  titulo="Página no encontrada — Spider-Man: Brand New Day"
+  descripcion="Esta página se perdió en algún tejado de Nueva York."
+>
+  <Atmosfera />
+
+  <main class="error404">
+    <div class="error404__skyline"><Skyline /></div>
+
+    <div class="error404__contenido">
+      <p class="error404__codigo">404</p>
+      <h1 class="error404__titulo">Se te escapó por los tejados</h1>
+      <p class="parrafo">
+        Esta página no existe, se movió o alguien la lanzó al vacío con una
+        telaraña. Volvé al principio y probá desde ahí.
+      </p>
+      {/* import.meta.env.BASE_URL y no "/": en GitHub Pages el sitio vive en
+          una subcarpeta, y "/" llevaría a la raíz del dominio, no a la página. */}
+      <a href={import.meta.env.BASE_URL} class="boton boton--solido">Volver al inicio</a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .error404 {
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(to top, var(--horizonte) 0%, var(--medianoche) 55%, var(--noche) 100%);
+  }
+
+  .error404__contenido {
+    align-self: center;
+    text-align: center;
+    padding: var(--espacio);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  .error404__codigo {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 62.5, 'wght' 900;
+    font-size: clamp(4rem, 16vw, 8rem);
+    line-height: 0.85;
+    color: var(--alba);
+  }
+
+  .error404__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wdth' 75, 'wght' 800;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .error404__skyline {
+    width: 100%;
+    height: min(30vh, 260px);
+  }
+</style>
