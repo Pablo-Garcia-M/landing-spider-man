@@ -4,9 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Cambiá "tu-usuario" por tu usuario real de GitHub antes de desplegar:
-  // alimenta las URLs canónicas, el sitemap y las etiquetas Open Graph.
-  site: 'https://tu-usuario.github.io',
+  // Alimenta las URLs canónicas, el sitemap y las etiquetas Open Graph.
+  site: 'https://Pablo-Garcia-M.github.io',
 
   // GitHub Pages sirve un repo normal (no un repo "tu-usuario.github.io")
   // bajo una subcarpeta con el nombre del repo, no en la raíz del dominio.
