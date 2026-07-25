@@ -32,3 +32,6 @@ pnpm-debug.log*
 
 # capturas que genera 'npm test'
 tests/capturas/
+
+# notas de aprendizaje personales, no para el repositorio público
+GUIA-PASO-A-PASO.txt
