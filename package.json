@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Landing de SPIDER-MAN: Brand New Day — Astro + React",
   "engines": {
-    "node": ">=18.20.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "astro dev",

@@ -11,7 +11,8 @@ SPIDER-MAN: Brand New Day con InfoJobs* (referencia IJ-JOB).
 
 ## Cómo probarla en 2 minutos
 
-Sólo hace falta tener [Node.js 18 o superior](https://nodejs.org) instalado.
+Sólo hace falta tener [Node.js 22.12 o superior](https://nodejs.org) instalado
+(lo exige Astro 7).
 
 ```bash
 npm install     # instala las dependencias (una sola vez)

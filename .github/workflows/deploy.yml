@@ -36,7 +36,9 @@ jobs:
       - name: Preparar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Astro 7 exige Node >=22.12.0; con Node 20 el build falla antes de
+          # arrancar ("Node.js v20 is not supported by Astro").
+          node-version: 22
           cache: npm
 
       - name: Instalar dependencias
