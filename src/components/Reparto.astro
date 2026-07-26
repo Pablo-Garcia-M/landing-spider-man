@@ -89,18 +89,42 @@ const FICHA = [
     background: var(--medianoche);
   }
 
+  /* Avatar sin foto real (ver nota en el frontmatter): una esfera con
+     degradado en vez de un círculo plano, para que se sienta más "retrato"
+     sin usar una imagen de una persona real. El anillo se enciende en
+     naranja al pasar el mouse, como el resto de los detalles interactivos
+     del sitio. */
   .actor__retrato {
     display: grid;
     place-items: center;
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--borde-fuerte);
+    width: clamp(3.5rem, 6vw, 4.25rem);
+    height: clamp(3.5rem, 6vw, 4.25rem);
+    margin-bottom: 1.1rem;
     border-radius: 50%;
+    background: radial-gradient(120% 120% at 32% 22%, var(--cielo) 0%, var(--medianoche) 55%, var(--noche) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgb(242 237 228 / 0.1),
+      inset 0 -6px 14px rgb(0 0 0 / 0.35);
+    outline: 1px solid var(--borde-fuerte);
+    outline-offset: 3px;
     font-family: var(--mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    color: var(--alba);
+    font-size: clamp(0.85rem, 1.6vw, 1rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--luz);
+    transition:
+      outline-color var(--transicion),
+      transform var(--transicion),
+      box-shadow var(--transicion);
+  }
+
+  .actor:hover .actor__retrato {
+    transform: scale(1.06);
+    outline-color: var(--alba);
+    box-shadow:
+      inset 0 0 0 1px rgb(242 237 228 / 0.1),
+      inset 0 -6px 14px rgb(0 0 0 / 0.35),
+      0 0 0 5px rgb(255 107 53 / 0.14);
   }
 
   .actor__nombre {

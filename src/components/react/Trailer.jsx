@@ -13,11 +13,18 @@ import ErrorBoundary from './ErrorBoundary.jsx';
  * tráfico, es la diferencia entre un LCP sano y uno arrastrado por un vídeo
  * que nadie miró.
  *
- * "hqdefault.jpg" y no "maxresdefault.jpg": el primero existe SIEMPRE para
- * cualquier video público; el segundo (más nítido) sólo se genera para
- * algunos videos y devuelve 404 en el resto — mejor una miniatura de menor
- * resolución garantizada que una de mayor resolución que a veces no carga.
- *
+ * La caja del tráiler ocupa todo el ancho del bloque (bastante más que
+ * 480px en cualquier pantalla que no sea un celular), así que probamos
+ * primero la miniatura de alta resolución (1280×720, nítida a ese tamaño)
+ * y sólo si no existiera para ese video en particular —YouTube no la genera
+ * para todos— vamos bajando de calidad en cascada hasta una que sabemos
+ * que existe siempre. Mostrar una miniatura de 480×360 estirada a lo ancho
+ * de toda la sección se ve borrosa/pixelada; probar en cascada evita eso
+ * sin perder la garantía de que siempre haya alguna imagen.
+ */
+const RESOLUCIONES = ['maxresdefault', 'sddefault', 'hqdefault'];
+
+/**
  * Props:
  *   videoId        {string}  ID de YouTube. Vacío = el tráiler todavía no salió.
  *   titulo         {string}  Nombre de la película, para los textos accesibles.
@@ -25,6 +32,7 @@ import ErrorBoundary from './ErrorBoundary.jsx';
  */
 function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
   const [reproduciendo, setReproduciendo] = useState(false);
+  const [indiceResolucion, setIndiceResolucion] = useState(0);
   const [miniaturaRota, setMiniaturaRota] = useState(false);
   const disponible = videoId.trim().length > 0;
 
@@ -34,7 +42,11 @@ function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&start=${inicioSegundos}`}
           title={`Tráiler de ${titulo}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          // "compute-pressure" incluido a propósito: el reproductor de YouTube
+          // lo pide internamente (lo usa para ajustar la calidad del video
+          // según la carga de la CPU) y, sin concedérselo acá, el navegador
+          // registra una violación de permisos en la consola por cada carga.
+          allow="accelerometer; autoplay; clipboard-write; compute-pressure; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
       </div>
@@ -46,11 +58,17 @@ function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
       {disponible && !miniaturaRota && (
         <img
           className="trailer__miniatura"
-          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          src={`https://img.youtube.com/vi/${videoId}/${RESOLUCIONES[indiceResolucion]}.jpg`}
           alt=""
           aria-hidden="true"
           loading="lazy"
-          onError={() => setMiniaturaRota(true)}
+          onError={() => {
+            if (indiceResolucion < RESOLUCIONES.length - 1) {
+              setIndiceResolucion((i) => i + 1);
+            } else {
+              setMiniaturaRota(true);
+            }
+          }}
         />
       )}
 

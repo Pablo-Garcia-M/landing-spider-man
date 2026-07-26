@@ -221,13 +221,37 @@ comprobar('Al cargar, los de abajo aún no se revelaron', visiblesAlInicio < tot
 
 // Recorremos la página entera, como haría una persona.
 await pagina.evaluate(async () => {
-  for (let y = 0; y < document.body.scrollHeight; y += 400) {
+  for (let y = 0; y < document.body.scrollHeight; y += 150) {
     window.scrollTo(0, y);
-    await new Promise((r) => setTimeout(r, 60));
+    await new Promise((r) => setTimeout(r, 45));
   }
   window.scrollTo(0, document.body.scrollHeight);
 });
-await pagina.waitForTimeout(1200);
+
+await pagina.waitForTimeout(600);
+
+/**
+ * "Repasar" cualquiera que se haya salteado, en vez de confiar en que un
+ * solo scroll masivo alcance para los 37 elementos. Con filas angostas y
+ * contiguas como las de la ficha técnica del reparto, el rango exacto de
+ * scroll en el que un elemento cumple el 12% de intersección puede ser más
+ * angosto que el paso del scroll simulado — el propio navegador puede
+ * saltarlo sin llegar a notificar el IntersectionObserver a tiempo, algo
+ * que un scroll real y continuo de una persona jamás hace.
+ *
+ * Re-consultamos "el primero que falte" en cada vuelta en vez de guardar
+ * una lista fija de antemano: a medida que uno se revela, deja de matchear
+ * ":not(.visible)" y el resto corre un lugar — una lista fija recorrida
+ * por posición termina apuntando a un elemento equivocado (o a ninguno).
+ * El tope de iteraciones evita un bucle infinito si alguno de verdad
+ * quedara roto para siempre.
+ */
+for (let intentos = 0; intentos < totalRevelar + 5; intentos++) {
+  const faltante = pagina.locator('.revelar:not(.visible)').first();
+  if ((await faltante.count()) === 0) break;
+  await faltante.scrollIntoViewIfNeeded();
+  await pagina.waitForTimeout(150);
+}
 
 const visiblesAlFinal = await pagina.locator('.revelar.visible').count();
 comprobar('Tras scrollear se revela todo', visiblesAlFinal === totalRevelar, `${visiblesAlFinal}/${totalRevelar}`);
