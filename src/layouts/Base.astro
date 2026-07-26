@@ -2,7 +2,7 @@
 import '../styles/fuentes.css';
 import '../styles/global.css';
 import archivoUrl from '../fonts/archivo-variable.woff2?url';
-import { PELICULA } from '../data/pelicula.js';
+import { PELICULA, CLAVE_ACCESO } from '../data/pelicula.js';
 
 // Props opcionales: { titulo, descripcion }. Si no llegan, se usan los
 // valores por defecto de abajo, que es el caso de la home.
@@ -41,10 +41,20 @@ const ogImagen = new URL(conBase('og.png'), Astro.site);
     <link rel="canonical" href={canonica} />
     <meta name="theme-color" content="#0B1026" />
 
+    {/*
+      Proyecto de portfolio, no oficial: a propósito NO se busca aparecer en
+      buscadores ni quedar asociado a la película real. "noindex" le pide a
+      Google/Bing que no la liste ni la guarde en resultados de búsqueda;
+      "nofollow" pide que tampoco siga los enlaces de acá para descubrir más
+      páginas. Ojo: esto la saca de la búsqueda, no la hace privada — quien
+      tenga el link exacto puede entrar igual, porque GitHub Pages no ofrece
+      control de acceso.
+    */}
+    <meta name="robots" content="noindex, nofollow" />
+
     <link rel="icon" href={conBase('favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={conBase('favicon.ico')} sizes="32x32" />
     <link rel="apple-touch-icon" href={conBase('apple-touch-icon.png')} />
-    <link rel="sitemap" href={conBase('sitemap-index.xml')} />
 
     {/* Cómo se ve el enlace cuando alguien lo comparte. */}
     <meta property="og:type" content="video.movie" />
@@ -67,34 +77,91 @@ const ogImagen = new URL(conBase('og.png'), Astro.site);
       al parsear el CSS, un paso más tarde de lo necesario.
     */}
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
-
-    {/*
-      Datos estructurados: Google entiende que esto es una película.
-
-      El reemplazo de "<" evita que un valor con "</script>" dentro (por
-      ejemplo, si algún día PELICULA.director sale de un CMS y no de un
-      archivo local de confianza) cierre la etiqueta antes de tiempo y
-      inyecte HTML arbitrario en la página. JSON.stringify no protege de eso
-      por sí solo: escapa para contexto JS, no para contexto HTML.
-    */}
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Movie',
-        name: PELICULA.tituloCompleto,
-        datePublished: '2026-07-29',
-        inLanguage: 'es',
-        director: { '@type': 'Person', name: PELICULA.director },
-        url: canonica.href,
-        image: ogImagen.href,
-      }).replace(/</g, '\\u003c')}
-    />
   </head>
 
   <body>
-    <a class="saltar" href="#contenido">Saltar al contenido</a>
-    <slot />
+    {/*
+      Candado de acceso: recordatorio, NO es seguridad real (ver
+      CLAVE_ACCESO en pelicula.js). Por defecto, sólo con CSS —sin esperar
+      a ningún script—, el overlay se ve y el contenido real queda oculto
+      con `display: none`. Así no hay ni un instante de parpadeo donde se
+      vea el contenido real antes de taparlo: el estado "bloqueado" es el
+      que arranca dibujado, no algo que un script agregue después.
+    */}
+    <div
+      class="candado"
+      id="candado"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="candado-titulo"
+      data-clave={CLAVE_ACCESO}
+    >
+      <form class="candado__caja">
+        <p class="candado__eyebrow">Acceso restringido</p>
+        {/* No es <h1>: el título de página (accesibilidad, SEO) sigue
+            siendo el del Hero. Esto es sólo el título del diálogo. */}
+        <p class="candado__titulo" id="candado-titulo">Todavía no</p>
+        <p class="candado__texto">
+          Esta página está en revisión. Si te pasaron el enlace, ingresá la
+          clave para verla.
+        </p>
+
+        <label class="sr-only" for="candado-clave">Clave de acceso</label>
+        <input
+          class="candado__input"
+          id="candado-clave"
+          type="password"
+          autocomplete="off"
+          placeholder="Clave de acceso"
+        />
+
+        <button type="submit" class="boton boton--solido candado__boton">Entrar</button>
+
+        <p class="candado__error" role="alert" hidden>Clave incorrecta. Probá de nuevo.</p>
+      </form>
+    </div>
+
+    {/* El contenido real de cada página vive acá adentro: oculto por CSS
+        mientras el candado esté activo (ver global.css, sección CANDADO). */}
+    <div id="pagina-real">
+      <a class="saltar" href="#contenido">Saltar al contenido</a>
+      <slot />
+    </div>
+
+    <script>
+      /**
+       * La clave viaja en el atributo data-clave del propio #candado (ver
+       * arriba), no inyectada dentro de este script. Un script con un
+       * valor de build interpolado adentro (`define:vars`) cambia de
+       * contenido en cada build y no calzaba bien con los hashes
+       * automáticos de la CSP (Astro los calcula sobre la plantilla, no
+       * siempre sobre el resultado final) — este script, en cambio, es
+       * siempre el mismo texto, así que su hash es estable.
+       */
+      const YA_DESBLOQUEADO = localStorage.getItem('acceso-spiderman') === 'ok';
+      if (YA_DESBLOQUEADO) {
+        document.documentElement.classList.add('desbloqueado');
+      }
+
+      const candado = document.getElementById('candado');
+      const formulario = candado?.querySelector('form');
+      const input = document.getElementById('candado-clave');
+      const error = candado?.querySelector('.candado__error');
+      const clave = candado?.dataset.clave ?? '';
+
+      formulario?.addEventListener('submit', (evento) => {
+        evento.preventDefault();
+
+        if (input.value.trim().toLowerCase() === clave.toLowerCase()) {
+          localStorage.setItem('acceso-spiderman', 'ok');
+          document.documentElement.classList.add('desbloqueado');
+        } else {
+          error.hidden = false;
+          input.value = '';
+          input.focus();
+        }
+      });
+    </script>
 
     <script>
       /**

@@ -1,10 +1,13 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Alimenta las URLs canónicas, el sitemap y las etiquetas Open Graph.
+  // Alimenta las URLs canónicas y las etiquetas Open Graph (cómo se ve el
+  // link cuando se comparte). No hay sitemap a propósito: este proyecto no
+  // busca aparecer en buscadores, sólo ser accesible por link directo — un
+  // sitemap existe únicamente para ayudar a los buscadores a encontrar
+  // páginas, así que generarlo sería remar en contra de esa decisión.
   site: 'https://Pablo-Garcia-M.github.io',
 
   // GitHub Pages sirve un repo normal (no un repo "tu-usuario.github.io")
@@ -14,7 +17,7 @@ export default defineConfig({
   // funcionen perfecto en local. Si el repo se llama distinto, cambiá esto.
   base: '/landing-spider-man/',
 
-  integrations: [react(), sitemap()],
+  integrations: [react()],
 
   // Salida 100% estática. Sin servidor que mantener, sin cold starts:
   // la landing se sirve desde CDN y aguanta un pico de tráfico masivo

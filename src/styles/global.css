@@ -282,6 +282,95 @@ textarea {
 }
 
 /* ============================================================================
+   7. CANDADO DE ACCESO
+   Recordatorio: no es seguridad real (ver CLAVE_ACCESO en pelicula.js).
+   El estado "oculto" es el que dibuja el CSS por defecto, sin depender de
+   que un script llegue a tiempo — así no hay ni un parpadeo del contenido
+   real antes de taparlo. `display: contents` en vez de `block` para que
+   #pagina-real, al desbloquear, desaparezca del box model y no le meta un
+   contenedor de más a nada (el layout queda como si nunca hubiera estado).
+   ========================================================================== */
+#pagina-real {
+  display: none;
+}
+html.desbloqueado #pagina-real {
+  display: contents;
+}
+
+.candado {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: var(--espacio);
+  background:
+    radial-gradient(90% 70% at 50% 100%, var(--horizonte) 0%, transparent 60%),
+    linear-gradient(160deg, var(--medianoche), var(--noche));
+}
+html.desbloqueado .candado {
+  display: none;
+}
+
+.candado__caja {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+  max-width: 26rem;
+  padding: clamp(2rem, 5vw, 3rem);
+  border: 1px solid var(--borde);
+  background: rgb(11 16 38 / 0.6);
+}
+
+.candado__eyebrow {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--alba);
+}
+
+.candado__titulo {
+  font-family: var(--display);
+  font-variation-settings: 'wdth' 70, 'wght' 800;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.candado__texto {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  max-width: 32ch;
+}
+
+.candado__input {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.8em 1em;
+  border: 1px solid var(--borde-fuerte);
+  background: var(--noche);
+  color: var(--luz);
+  font-size: 0.95rem;
+  text-align: center;
+}
+.candado__input::placeholder {
+  color: var(--luz-tenue);
+}
+
+.candado__boton {
+  width: 100%;
+  margin-top: 0.3rem;
+}
+
+.candado__error {
+  color: var(--alba);
+  font-size: 0.85rem;
+}
+
+/* ============================================================================
    ISLAS DE REACT
    Estilos globales porque el scope de Astro no cruza a otro framework.
    Prefijo por componente para que sigan siendo legibles como un módulo.

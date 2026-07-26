@@ -20,6 +20,7 @@ import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';
+import { CLAVE_ACCESO } from '../src/data/pelicula.js';
 
 const RAIZ = resolve(import.meta.dirname, '..');
 const DIST = join(RAIZ, 'dist');
@@ -136,6 +137,28 @@ pagina.on('pageerror', (e) => erroresConsola.push(String(e)));
 const base = `http://localhost:${PUERTO}${BASE}`;
 await pagina.goto(base, { waitUntil: 'networkidle' });
 
+console.log('\n── CANDADO DE ACCESO ────────────────────────────────');
+
+// El resto de la suite necesita el sitio desbloqueado para poder interactuar
+// con nada, así que este bloque va primero y deja la página lista para
+// todo lo que sigue.
+comprobar('El candado se muestra por defecto (sin desbloquear)', await pagina.locator('#candado').isVisible());
+comprobar(
+  'El contenido real está oculto mientras el candado está activo',
+  !(await pagina.locator('a.saltar').isVisible())
+);
+
+await pagina.fill('#candado-clave', 'clave-incorrecta-a-propósito');
+await pagina.locator('.candado__boton').click();
+await pagina.waitForTimeout(200);
+comprobar('Una clave incorrecta muestra el error y no desbloquea', await pagina.locator('.candado__error').isVisible());
+
+await pagina.fill('#candado-clave', CLAVE_ACCESO);
+await pagina.locator('.candado__boton').click();
+await pagina.waitForTimeout(200);
+comprobar('La clave correcta desbloquea el contenido', await pagina.locator('a.saltar').isVisible());
+comprobar('El candado desaparece al desbloquear', !(await pagina.locator('#candado').isVisible()));
+
 console.log('\n── ESTRUCTURA Y SEO ────────────────────────────────');
 
 comprobar('El documento declara lang="es"', (await pagina.getAttribute('html', 'lang')) === 'es');
@@ -147,7 +170,15 @@ const desc = await pagina.getAttribute('meta[name="description"]', 'content');
 comprobar('Hay meta description', desc && desc.length > 50, `${desc?.length ?? 0} caracteres`);
 
 comprobar('Hay etiquetas Open Graph', (await pagina.locator('meta[property^="og:"]').count()) >= 6);
-comprobar('Hay datos estructurados de película', (await pagina.locator('script[type="application/ld+json"]').count()) === 1);
+
+// Proyecto de portfolio, no oficial: a propósito NO queremos aparecer en
+// buscadores, sólo ser accesibles por link directo. Si este chequeo
+// alguna vez falla, alguien sacó el <meta name="robots"> sin querer.
+comprobar(
+  'La página pide explícitamente no ser indexada (noindex)',
+  (await pagina.getAttribute('meta[name="robots"]', 'content')) === 'noindex, nofollow'
+);
+
 comprobar('Hay exactamente un <h1>', (await pagina.locator('h1').count()) === 1);
 comprobar('Hay enlace para saltar al contenido', (await pagina.locator('a.saltar').count()) === 1);
 

@@ -43,6 +43,21 @@ export const PELICULA = {
 };
 
 /**
+ * Candado de acceso — NO es seguridad real.
+ *
+ * El sitio va con `noindex` y sin sitemap para no aparecer en buscadores
+ * (pelicula.js no participa de eso), pero mientras el proyecto espera la
+ * aprobación de Midudev, también hace falta que quien tenga el link no
+ * vea el contenido sin más. Esta clave es esa traba simbólica: vive en un
+ * archivo que se manda entero al navegador, así que cualquiera que abra
+ * las herramientas de desarrollador puede leerla en dos segundos. Frena a
+ * un visitante casual, no a alguien que la busque a propósito.
+ *
+ * Para cambiarla, editar sólo esta línea.
+ */
+export const CLAVE_ACCESO = 'telarana2026';
+
+/**
  * Reparto anunciado públicamente. Es una landing de fan/portfolio: los datos
  * provienen de anuncios de prensa y pueden cambiar hasta el estreno.
  */

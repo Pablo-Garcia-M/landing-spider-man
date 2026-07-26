@@ -157,14 +157,30 @@ No es un extra al final, está en el código desde el principio:
 - El acordeón de FAQ usa `<details>` nativo: accesible por teclado y buscable
   con Ctrl+F incluso plegado, con cero JavaScript.
 
-### SEO
+### No indexable, a propósito
 
-`<title>` y meta description propios, URL canónica, Open Graph y Twitter Card
-con imagen de 1200×630, datos estructurados `schema.org/Movie` para que Google
-entienda que esto es una película y no un blog, `sitemap-index.xml` generado
-automáticamente por `@astrojs/sitemap`, y un `favicon.svg` + `favicon.ico` +
-`apple-touch-icon.png` para que el icono se vea nítido en cualquier pestaña,
-marcador o pantalla de inicio de iOS.
+Este es un proyecto de portfolio, no una página oficial — y justamente por
+eso NO busca aparecer en buscadores. Pensarlo al revés de "SEO" da esto:
+
+- `<meta name="robots" content="noindex, nofollow">` en cada página: le pide
+  a Google/Bing que no la listen ni seleccionen sus enlaces para descubrir
+  más contenido.
+- `robots.txt` con `Disallow: /` para reforzarlo.
+- Sin sitemap: generar uno sólo tendría sentido si quisiéramos ayudar a los
+  buscadores a encontrar páginas, justo lo contrario de la idea.
+
+Importante: esto la saca de los resultados de búsqueda, **no la hace
+privada**. GitHub Pages no ofrece control de acceso — cualquiera con el
+link exacto puede entrar. Es el mismo patrón que un video de YouTube "no
+listado": no aparece navegando ni buscando, pero el link en sí funciona
+para quien lo tenga.
+
+Lo que sí se mantiene, porque no tiene que ver con buscadores sino con
+cómo se ve el link cuando VOS lo mandás: `<title>`/meta description
+propios, URL canónica, y Open Graph + Twitter Card con imagen de 1200×630
+(la tarjeta que aparece en WhatsApp/Slack al pegar el link). También un
+`favicon.svg` + `favicon.ico` + `apple-touch-icon.png` para que el ícono
+se vea nítido en cualquier pestaña o pantalla de inicio.
 
 ---
 
@@ -240,7 +256,7 @@ landing-spider-man/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml         Compila y publica en GitHub Pages en cada push a main
-├── astro.config.mjs          Configuración de Astro (React, sitemap, `base` de GitHub Pages)
+├── astro.config.mjs          Configuración de Astro (React, `base` de GitHub Pages, CSP)
 ├── package.json
 ├── public/                    Se copia tal cual a la raíz del sitio
 │   ├── favicon.svg / favicon.ico / apple-touch-icon.png
@@ -309,8 +325,8 @@ Levanta un servidor con el sitio ya compilado, abre el Edge o Chrome que ya
 tengas instalado (no descarga ningún navegador) y verifica:
 
 **Estructura y SEO** — idioma declarado, título y descripción de longitud
-razonable, Open Graph, datos estructurados, un único `<h1>`, enlace de salto al
-contenido.
+razonable, Open Graph, la etiqueta `noindex` que evita que se indexe, un
+único `<h1>`, enlace de salto al contenido.
 
 **Cuenta atrás** — que se hidrate con cifras reales, que avance con el tiempo,
 que esté oculta al lector de pantalla y que la fecha se anuncie en texto
@@ -356,16 +372,11 @@ en el repo) cada vez que se sube algo a `main`.
    "Build and deployment", elegir **Source: GitHub Actions** (no "Deploy
    from a branch"). Con eso alcanza; el workflow ya está escrito.
 
-2. **Actualizar dos archivos con tu usuario y el nombre real del repo**
-   (ahora mismo llevan el placeholder `tu-usuario`):
-
-   - `astro.config.mjs`:
+2. **Actualizar `astro.config.mjs`** con tu usuario y el nombre real del repo:
      ```js
      site: 'https://tu-usuario.github.io',
      base: '/landing-spider-man/',   // el nombre de TU repo, con barras a los lados
      ```
-   - `public/robots.txt`, la línea `Sitemap:`.
-
    Si el repo se llamara distinto a `landing-spider-man`, `base` tiene que
    coincidir exactamente con ese nombre — es la subcarpeta bajo la que
    GitHub Pages sirve un repo que no se llama `tu-usuario.github.io`.
@@ -385,7 +396,7 @@ el `base` en `astro.config.mjs`, cualquier ruta absoluta del sitio
 apuntaría a la raíz del dominio y daría 404 en producción aunque funcione
 perfecto en local. Por eso:
 
-- Todo lo que vive en `public/` (favicon, `og.png`, el sitemap) se referencia
+- Todo lo que vive en `public/` (favicon, `og.png`) se referencia
   en `src/layouts/Base.astro` con un helper (`conBase`) que antepone
   `import.meta.env.BASE_URL` — la variable que Astro llena con el valor de
   `base` en tiempo de build.

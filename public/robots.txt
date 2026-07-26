@@ -1,4 +1,6 @@
+# Proyecto de portfolio, no oficial: a propósito no se busca aparecer en
+# buscadores. "Disallow: /" le pide a los rastreadores que no indexen nada
+# de este sitio. (No reemplaza al <meta name="robots"> de cada página, que
+# es lo que de verdad garantiza que no quede listado — ver Base.astro.)
 User-agent: *
-Allow: /
-
-Sitemap: https://Pablo-Garcia-M.github.io/landing-spider-man/sitemap-index.xml
+Disallow: /
