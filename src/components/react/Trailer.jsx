@@ -6,10 +6,17 @@ import ErrorBoundary from './ErrorBoundary.jsx';
  *
  * Un iframe de YouTube arrastra varios cientos de KB de JS y abre conexiones a
  * tres dominios en cuanto aparece en el DOM — lo dé play alguien o no. Acá la
- * página no le pide absolutamente nada a YouTube hasta el click: mostramos una
- * portada propia (un degradado, cero bytes de red) y recién entonces creamos
- * el iframe con autoplay. En una landing que espera un pico de tráfico, es la
- * diferencia entre un LCP sano y uno arrastrado por un vídeo que nadie miró.
+ * página no le pide absolutamente nada a YouTube hasta el click: mostramos la
+ * miniatura oficial del video (una sola imagen liviana, servida por
+ * img.youtube.com, sin nada del peso del reproductor) y recién al hacer click
+ * se crea el iframe con autoplay. En una landing que espera un pico de
+ * tráfico, es la diferencia entre un LCP sano y uno arrastrado por un vídeo
+ * que nadie miró.
+ *
+ * "hqdefault.jpg" y no "maxresdefault.jpg": el primero existe SIEMPRE para
+ * cualquier video público; el segundo (más nítido) sólo se genera para
+ * algunos videos y devuelve 404 en el resto — mejor una miniatura de menor
+ * resolución garantizada que una de mayor resolución que a veces no carga.
  *
  * Props:
  *   videoId        {string}  ID de YouTube. Vacío = el tráiler todavía no salió.
@@ -18,6 +25,7 @@ import ErrorBoundary from './ErrorBoundary.jsx';
  */
 function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
   const [reproduciendo, setReproduciendo] = useState(false);
+  const [miniaturaRota, setMiniaturaRota] = useState(false);
   const disponible = videoId.trim().length > 0;
 
   if (reproduciendo) {
@@ -35,6 +43,17 @@ function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
 
   return (
     <div className="trailer">
+      {disponible && !miniaturaRota && (
+        <img
+          className="trailer__miniatura"
+          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          onError={() => setMiniaturaRota(true)}
+        />
+      )}
+
       <button
         type="button"
         className="trailer__boton"

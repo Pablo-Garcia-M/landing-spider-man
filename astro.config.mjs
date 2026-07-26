@@ -53,7 +53,9 @@ export default defineConfig({
     csp: {
       directives: [
         "default-src 'self'",
-        "img-src 'self' data:",
+        // img.youtube.com sirve la miniatura del tráiler que se ve antes de
+        // reproducirlo (patrón facade): una imagen, no el iframe pesado.
+        "img-src 'self' data: https://img.youtube.com",
         "font-src 'self'",
         // El tráiler se embebe desde youtube-nocookie recién al hacer click
         // (patrón facade); sin este permiso el iframe quedaría bloqueado.

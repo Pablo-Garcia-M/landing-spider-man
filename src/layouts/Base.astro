@@ -137,12 +137,11 @@ const ogImagen = new URL(conBase('og.png'), Astro.site);
        * automáticos de la CSP (Astro los calcula sobre la plantilla, no
        * siempre sobre el resultado final) — este script, en cambio, es
        * siempre el mismo texto, así que su hash es estable.
+       *
+       * A propósito NO se guarda el desbloqueo en localStorage/sessionStorage:
+       * el candado tiene que pedir la clave en CADA visita, sin excepción,
+       * aunque sea la misma persona entrando por tercera vez.
        */
-      const YA_DESBLOQUEADO = localStorage.getItem('acceso-spiderman') === 'ok';
-      if (YA_DESBLOQUEADO) {
-        document.documentElement.classList.add('desbloqueado');
-      }
-
       const candado = document.getElementById('candado');
       const formulario = candado?.querySelector('form');
       const input = document.getElementById('candado-clave');
@@ -153,7 +152,6 @@ const ogImagen = new URL(conBase('og.png'), Astro.site);
         evento.preventDefault();
 
         if (input.value.trim().toLowerCase() === clave.toLowerCase()) {
-          localStorage.setItem('acceso-spiderman', 'ok');
           document.documentElement.classList.add('desbloqueado');
         } else {
           error.hidden = false;

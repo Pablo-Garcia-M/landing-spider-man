@@ -440,14 +440,44 @@ html.desbloqueado .candado {
   width: 100%;
   overflow: hidden;
   border: 1px solid var(--borde);
+  /* Fondo de reserva mientras la miniatura carga (o si no hay tráiler
+     todavía): el mismo degradado que había antes de agregar la miniatura. */
   background:
     radial-gradient(75% 95% at 50% 108%, var(--horizonte) 0%, transparent 62%),
     linear-gradient(160deg, var(--medianoche), var(--noche));
 }
 
+.trailer__miniatura {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Velo oscuro ENCIMA de la miniatura (no reemplaza el fondo de .trailer,
+   se dibuja arriba con su propio elemento): sin esto, una miniatura clara
+   dejaría el ícono de play y el texto ilegibles según el fotograma que
+   YouTube haya elegido como portada.
+   z-index explícito en los tres niveles (miniatura/velo/botón): un ::after
+   sin z-index se ordena DESPUÉS de los hijos reales en el árbol de pintado,
+   así que sin esto el velo taparía visualmente al botón en vez de quedar
+   debajo. */
+.trailer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(75% 95% at 50% 108%, var(--horizonte) 0%, transparent 62%),
+    linear-gradient(160deg, rgb(19 26 58 / 0.55), rgb(11 16 38 / 0.75));
+}
+
 .trailer__boton {
   position: absolute;
   inset: 0;
+  z-index: 2;
   display: grid;
   place-items: center;
   align-content: center;

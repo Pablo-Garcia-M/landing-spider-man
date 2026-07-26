@@ -284,6 +284,18 @@ await pagina.waitForTimeout(400);
 comprobar('No hay iframe de YouTube antes del click (facade)', (await pagina.locator('.trailer iframe').count()) === 0);
 comprobar('La caja del tráiler reserva su espacio (sin CLS)', (await pagina.locator('.trailer').count()) === 1);
 
+const miniatura = await pagina.getAttribute('.trailer__miniatura', 'src');
+comprobar('Se muestra la miniatura real del video como portada', !!miniatura?.includes('img.youtube.com'), miniatura ?? 'sin miniatura');
+
+await pagina.locator('.trailer__boton').click();
+await pagina.waitForTimeout(500);
+const iframeSrc = await pagina.getAttribute('.trailer iframe', 'src');
+comprobar(
+  'Al hacer click, el iframe carga el video correcto desde el segundo indicado',
+  iframeSrc?.includes('/embed/') && iframeSrc?.includes('start=5'),
+  iframeSrc ?? 'sin iframe'
+);
+
 console.log('\n── FAQ ─────────────────────────────────────────────');
 
 const primeraFaq = pagina.locator('.faq__item').first();
