@@ -12,15 +12,15 @@ import { PREGUNTAS } from '../data/pelicula.js';
     <details> nativo: acordeón accesible por teclado, buscable con Ctrl+F
     incluso plegado y con cero JavaScript. Una librería aquí sería peso muerto.
   */}
-  <div class="faq">
+  <div class="preguntas">
     {
       PREGUNTAS.map((item) => (
-        <details class="faq__item revelar" name="preguntas">
-          <summary class="faq__pregunta">
+        <details class="preguntas__item revelar" name="preguntas">
+          <summary class="preguntas__pregunta">
             <span>{item.pregunta}</span>
-            <span class="faq__signo" aria-hidden="true" />
+            <span class="preguntas__signo" aria-hidden="true" />
           </summary>
-          <p class="faq__respuesta">{item.respuesta}</p>
+          <p class="preguntas__respuesta">{item.respuesta}</p>
         </details>
       ))
     }
@@ -28,15 +28,15 @@ import { PREGUNTAS } from '../data/pelicula.js';
 </section>
 
 <style>
-  .faq {
+  .preguntas {
     border-top: 1px solid var(--borde);
   }
 
-  .faq__item {
+  .preguntas__item {
     border-bottom: 1px solid var(--borde);
   }
 
-  .faq__pregunta {
+  .preguntas__pregunta {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -51,23 +51,23 @@ import { PREGUNTAS } from '../data/pelicula.js';
   }
 
   /* El triángulo por defecto de Safari/Chrome, fuera. */
-  .faq__pregunta::-webkit-details-marker {
+  .preguntas__pregunta::-webkit-details-marker {
     display: none;
   }
 
-  .faq__pregunta:hover {
+  .preguntas__pregunta:hover {
     color: var(--alba);
   }
 
   /* Cruz construida con dos pseudo-elementos: uno rota y se vuelve un menos. */
-  .faq__signo {
+  .preguntas__signo {
     position: relative;
     flex: none;
     width: 1rem;
     height: 1rem;
   }
-  .faq__signo::before,
-  .faq__signo::after {
+  .preguntas__signo::before,
+  .preguntas__signo::after {
     content: '';
     position: absolute;
     inset: 50% 0 auto 0;
@@ -75,14 +75,14 @@ import { PREGUNTAS } from '../data/pelicula.js';
     background: var(--alba);
     transition: transform var(--transicion);
   }
-  .faq__signo::after {
+  .preguntas__signo::after {
     transform: rotate(90deg);
   }
-  .faq__item[open] .faq__signo::after {
+  .preguntas__item[open] .preguntas__signo::after {
     transform: rotate(0deg);
   }
 
-  .faq__respuesta {
+  .preguntas__respuesta {
     padding-bottom: 1.6rem;
     max-width: 62ch;
     color: var(--luz);
@@ -90,7 +90,7 @@ import { PREGUNTAS } from '../data/pelicula.js';
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .faq__item[open] .faq__respuesta {
+    .preguntas__item[open] .preguntas__respuesta {
       animation: desplegar 320ms ease;
     }
     @keyframes desplegar {

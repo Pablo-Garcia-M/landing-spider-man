@@ -28,7 +28,7 @@ export const PELICULA = {
 
   director: 'Destin Daniel Cretton',
   estudios: 'Marvel Studios · Sony Pictures',
-  clasificacion: 'Pendiente de calificación',
+  clasificacion: 'PG-13',
 
   /**
    * ID de YouTube del tráiler oficial. Mientras esté vacío, el componente
