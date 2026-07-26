@@ -275,7 +275,7 @@ landing-spider-man/
 │   │   ├── Reparto.astro
 │   │   ├── Estreno.astro
 │   │   ├── Compartir.astro    Botones de WhatsApp, X, Facebook y copiar enlace
-│   │   ├── Faq.astro
+│   │   ├── Preguntas.astro
 │   │   ├── Pie.astro
 │   │   └── react/             ← Las tres islas interactivas
 │   │       ├── CuentaAtras.jsx

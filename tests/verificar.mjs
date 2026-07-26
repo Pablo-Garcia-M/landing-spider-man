@@ -320,7 +320,7 @@ comprobar(
   iframeSrc ?? 'sin iframe'
 );
 
-console.log('\n── FAQ ─────────────────────────────────────────────');
+console.log('\n── PREGUNTAS ────────────────────────────────────────');
 
 /**
  * Scroll explícito a propósito, en vez de confiar en el auto-scroll
@@ -334,11 +334,11 @@ console.log('\n── FAQ ──────────────────
 await pagina.locator('#preguntas').scrollIntoViewIfNeeded();
 await pagina.waitForTimeout(300);
 
-const primeraFaq = pagina.locator('.faq__item').first();
-comprobar('El acordeón empieza cerrado', !(await primeraFaq.evaluate((e) => e.open)));
-await primeraFaq.locator('summary').click();
+const primeraPregunta = pagina.locator('.preguntas__item').first();
+comprobar('El acordeón empieza cerrado', !(await primeraPregunta.evaluate((e) => e.open)));
+await primeraPregunta.locator('summary').click();
 await pagina.waitForTimeout(200);
-comprobar('El acordeón abre al pulsar', await primeraFaq.evaluate((e) => e.open));
+comprobar('El acordeón abre al pulsar', await primeraPregunta.evaluate((e) => e.open));
 
 console.log('\n── RESPONSIVE ──────────────────────────────────────');
 
