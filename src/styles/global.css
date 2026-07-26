@@ -525,9 +525,6 @@ html.desbloqueado .candado {
   fill: var(--luz);
   transition: fill var(--transicion);
 }
-.trailer__icono--play svg {
-  margin-left: 12%;
-}
 
 .trailer__boton:not([disabled]):hover .trailer__icono,
 .trailer__boton:focus-visible .trailer__icono {

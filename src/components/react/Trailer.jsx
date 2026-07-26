@@ -90,10 +90,7 @@ function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
             : 'El tráiler todavía no está disponible'
         }
       >
-        <span
-          className={`trailer__icono ${disponible ? 'trailer__icono--play' : ''}`}
-          aria-hidden="true"
-        >
+        <span className="trailer__icono" aria-hidden="true">
           {disponible ? (
             <svg viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
