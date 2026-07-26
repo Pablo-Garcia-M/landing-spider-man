@@ -56,7 +56,7 @@ export const PELICULA = {
  *
  * Para cambiarla, editar sólo esta línea.
  */
-export const CLAVE_ACCESO = 'telaraña2026';
+export const CLAVE_ACCESO = 'telarana2026';
 
 /**
  * Reparto anunciado públicamente. Es una landing de fan/portfolio: los datos
