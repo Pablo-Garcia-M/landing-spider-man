@@ -322,6 +322,18 @@ comprobar(
 
 console.log('\n── FAQ ─────────────────────────────────────────────');
 
+/**
+ * Scroll explícito a propósito, en vez de confiar en el auto-scroll
+ * implícito de Playwright antes de un click: el tráiler, en el bloque
+ * anterior, quedó reproduciendo un video real (ya no bloqueado por el
+ * bug del velo) — con un <iframe> de YouTube activo en la página, el
+ * auto-scroll-al-hacer-click puede calcular mal la posición del siguiente
+ * elemento. Llevar la sección a la vista nosotros mismos antes de tocar
+ * nada evita depender de ese cálculo.
+ */
+await pagina.locator('#preguntas').scrollIntoViewIfNeeded();
+await pagina.waitForTimeout(300);
+
 const primeraFaq = pagina.locator('.faq__item').first();
 comprobar('El acordeón empieza cerrado', !(await primeraFaq.evaluate((e) => e.open)));
 await primeraFaq.locator('summary').click();

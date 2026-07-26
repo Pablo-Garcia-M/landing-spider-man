@@ -29,7 +29,6 @@ export const PELICULA = {
   director: 'Destin Daniel Cretton',
   estudios: 'Marvel Studios · Sony Pictures',
   clasificacion: 'Pendiente de calificación',
-  idiomas: 'Castellano · V.O.S.E.',
 
   /**
    * ID de YouTube del tráiler oficial. Mientras esté vacío, el componente
@@ -57,7 +56,7 @@ export const PELICULA = {
  *
  * Para cambiarla, editar sólo esta línea.
  */
-export const CLAVE_ACCESO = 'telarana2026';
+export const CLAVE_ACCESO = 'telaraña2026';
 
 /**
  * Reparto anunciado públicamente. Es una landing de fan/portfolio: los datos
@@ -69,16 +68,16 @@ export const REPARTO = [
   { actor: 'Jacob Batalon', personaje: 'Ned Leeds' },
   { actor: 'Jon Bernthal', personaje: 'Frank Castle / The Punisher' },
   { actor: 'Mark Ruffalo', personaje: 'Bruce Banner / Hulk' },
-  { actor: 'Sadie Sink', personaje: 'Personaje sin anunciar' },
+  { actor: 'Sadie Sink', personaje: 'Personaje misterioso' },
   { actor: 'Michael Mando', personaje: 'Mac Gargan / Scorpion' },
   { actor: 'Liza Colón-Zayas', personaje: 'Personaje sin anunciar' },
 ];
 
-export const FAQ = [
+export const PREGUNTAS = [
   {
     pregunta: '¿Cuándo se estrena?',
     respuesta:
-      'El 29 de julio de 2026 en cines de toda Hispanoamérica y España. Los pases de medianoche se anunciarán en las próximas semanas.',
+      'El 29 de julio de 2026 en cines de España y Latinoamérica.'
   },
   {
     pregunta: '¿Hay escenas post-créditos?',
@@ -106,5 +105,5 @@ export const NAVEGACION = [
   { id: 'sinopsis', texto: 'Sinopsis' },
   { id: 'trailer', texto: 'Tráiler' },
   { id: 'reparto', texto: 'Reparto' },
-  { id: 'faq', texto: 'Preguntas' },
+  { id: 'preguntas', texto: 'Preguntas' },
 ];

@@ -52,7 +52,7 @@ la consola esté limpia… Al terminar deja capturas de pantalla en
 | **Tráiler** | Reproductor que no toca YouTube hasta que alguien pulsa play. |
 | **Reparto** | Ocho fichas del reparto anunciado y ficha técnica de la película. |
 | **Estreno** | La fecha a pantalla completa, el botón de calendario y los botones para compartir. |
-| **FAQ** | Acordeón de preguntas frecuentes. |
+| **Preguntas** | Acordeón de preguntas frecuentes. |
 | **404** | Página de error a juego con el resto del sitio, no la de por defecto del hosting. |
 
 ---
@@ -101,8 +101,8 @@ trozos interactivos cargan React, cada uno por separado y cuando toca.
 | `BotonCalendario` | `client:visible` | Sólo importa cuando alguien puede pulsarlo. |
 | `Trailer` | `client:visible` | Está tres pantallas más abajo. |
 
-El resto de la página — navegación, sinopsis, reparto, FAQ, pie — es HTML y CSS
-puros, con cero JavaScript.
+El resto de la página — navegación, sinopsis, reparto, preguntas, pie — es HTML
+y CSS puros, con cero JavaScript.
 
 ### 2. «Implementar interfaces que hagan la navegación fluida»
 
@@ -150,8 +150,8 @@ No es un extra al final, está en el código desde el principio:
   estado con `aria-expanded`.
 - Todo respeta `prefers-reduced-motion`: quien pidió menos movimiento recibe
   menos movimiento.
-- El acordeón de FAQ usa `<details>` nativo: accesible por teclado y buscable
-  con Ctrl+F incluso plegado, con cero JavaScript.
+- El acordeón de preguntas usa `<details>` nativo: accesible por teclado y
+  buscable con Ctrl+F incluso plegado, con cero JavaScript.
 
 ### No indexable, a propósito
 
@@ -258,7 +258,7 @@ landing-spider-man/
 │   └── robots.txt
 ├── src/
 │   ├── data/
-│   │   └── pelicula.js        ← FUENTE ÚNICA DE VERDAD (fecha, reparto, cines, FAQ)
+│   │   └── pelicula.js        ← FUENTE ÚNICA DE VERDAD (fecha, reparto, preguntas)
 │   ├── fonts/                 Archivo, Manrope y Space Mono autoalojados (.woff2)
 │   ├── styles/
 │   │   ├── fuentes.css         @font-face de las fuentes autoalojadas
@@ -340,7 +340,7 @@ título bien escapado, y que `Escape` lo cierre.
 **Tráiler** — que no exista ningún iframe de YouTube antes del click y que la
 caja reserve su espacio.
 
-**FAQ** — que el acordeón empiece cerrado y abra al pulsar.
+**Preguntas** — que el acordeón empiece cerrado y abra al pulsar.
 
 **Responsive** — sin scroll horizontal a 390 px, 820 px y 1440 px, con captura
 de página completa en cada tamaño.

@@ -463,8 +463,16 @@ html.desbloqueado .candado {
    z-index explícito en los tres niveles (miniatura/velo/botón): un ::after
    sin z-index se ordena DESPUÉS de los hijos reales en el árbol de pintado,
    así que sin esto el velo taparía visualmente al botón en vez de quedar
-   debajo. */
-.trailer::after {
+   debajo.
+   ".trailer--portada::after" y NO ".trailer::after": este velo tiene que
+   existir SÓLO en el estado "portada, antes de reproducir". El mismo div
+   ".trailer" se reutiliza para envolver el <iframe> una vez que el video
+   arranca (ver Trailer.jsx) — si el velo estuviera en ".trailer" a secas,
+   quedaría flotando también arriba del video real ya reproduciéndose,
+   tapando (visual Y funcionalmente: bloquea los clicks) los controles
+   nativos de YouTube. Este bug real se detectó porque el video no se podía
+   pausar ni rebobinar una vez iniciado. */
+.trailer--portada::after {
   content: '';
   position: absolute;
   inset: 0;

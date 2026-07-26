@@ -54,7 +54,14 @@ function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
   }
 
   return (
-    <div className="trailer">
+    // "trailer--portada" a propósito, distinto del div de arriba (el que
+    // envuelve el <iframe> cuando ya está reproduciendo): el velo oscuro
+    // que oscurece la miniatura (ver global.css) está pegado a esta clase
+    // puntual, no a ".trailer" en general — si estuviera en ".trailer" a
+    // secas, ese velo se dibujaría TAMBIÉN arriba del iframe real, tapando
+    // los controles nativos de YouTube (play/pausa/barra de progreso) e
+    // impidiendo cualquier click sobre el video ya en reproducción.
+    <div className="trailer trailer--portada">
       {disponible && !miniaturaRota && (
         <img
           className="trailer__miniatura"

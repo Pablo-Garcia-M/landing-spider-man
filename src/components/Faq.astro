@@ -1,8 +1,8 @@
 ---
-import { FAQ } from '../data/pelicula.js';
+import { PREGUNTAS } from '../data/pelicula.js';
 ---
 
-<section class="bloque" id="faq">
+<section class="bloque" id="preguntas">
   <div class="bloque__cabecera">
     <p class="eyebrow revelar">Antes de que preguntes</p>
     <h2 class="titulo-seccion revelar" data-retraso="1">Dudas</h2>
@@ -14,8 +14,8 @@ import { FAQ } from '../data/pelicula.js';
   */}
   <div class="faq">
     {
-      FAQ.map((item) => (
-        <details class="faq__item revelar" name="faq">
+      PREGUNTAS.map((item) => (
+        <details class="faq__item revelar" name="preguntas">
           <summary class="faq__pregunta">
             <span>{item.pregunta}</span>
             <span class="faq__signo" aria-hidden="true" />
