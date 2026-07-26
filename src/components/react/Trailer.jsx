@@ -12,10 +12,11 @@ import ErrorBoundary from './ErrorBoundary.jsx';
  * diferencia entre un LCP sano y uno arrastrado por un vídeo que nadie miró.
  *
  * Props:
- *   videoId {string}  ID de YouTube. Vacío = el tráiler todavía no salió.
- *   titulo  {string}  Nombre de la película, para los textos accesibles.
+ *   videoId        {string}  ID de YouTube. Vacío = el tráiler todavía no salió.
+ *   titulo         {string}  Nombre de la película, para los textos accesibles.
+ *   inicioSegundos {number}  Segundo en el que arranca el video (del "&t=" del link original).
  */
-function TrailerBase({ videoId = '', titulo }) {
+function TrailerBase({ videoId = '', titulo, inicioSegundos = 0 }) {
   const [reproduciendo, setReproduciendo] = useState(false);
   const disponible = videoId.trim().length > 0;
 
@@ -23,7 +24,7 @@ function TrailerBase({ videoId = '', titulo }) {
     return (
       <div className="trailer">
         <iframe
-          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&start=${inicioSegundos}`}
           title={`Tráiler de ${titulo}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen

@@ -242,37 +242,9 @@ await pagina.evaluate(() => window.scrollTo(0, 1200));
 await pagina.waitForTimeout(500);
 comprobar('La barra se vuelve sólida al bajar', (await pagina.getAttribute('[data-nav]', 'data-fijada')) === 'true');
 
-await pagina.locator('.nav__enlace', { hasText: 'Sesiones' }).click();
+await pagina.locator('.nav__enlace', { hasText: 'Reparto' }).click();
 await pagina.waitForTimeout(1200);
 comprobar('El scroll-spy marca la sección activa', (await pagina.locator('.nav__enlace[aria-current="true"]').count()) >= 1);
-
-console.log('\n── SESIONES (isla React) ───────────────────────────');
-
-await pagina.locator('#sesiones').scrollIntoViewIfNeeded();
-await pagina.waitForSelector('.sesion', { state: 'visible', timeout: 5000 });
-
-const madrid = await pagina.locator('.sesion__cine').allTextContents();
-comprobar('Carga sesiones de la primera ciudad', madrid.length > 0, `${madrid.length} cines`);
-
-await pagina.getByRole('tab', { name: 'Bilbao' }).click();
-await pagina.waitForTimeout(300);
-const bilbao = await pagina.locator('.sesion__cine').allTextContents();
-comprobar('Cambiar de ciudad cambia la lista', bilbao.join() !== madrid.join(), bilbao.join(' / '));
-
-await pagina.getByRole('button', { name: 'IMAX', exact: true }).click();
-await pagina.waitForTimeout(300);
-const formatos = await pagina.locator('.sesion__formato').allTextContents();
-comprobar(
-  'El filtro de formato es coherente',
-  formatos.every((f) => f === 'IMAX') || formatos.length === 0,
-  formatos.length === 0 ? 'sin sesiones IMAX en Bilbao (estado vacío)' : formatos.join()
-);
-
-const estadoVacio = await pagina.locator('[role="status"]', { hasText: 'Todavía no hay sesiones' }).count();
-comprobar('El estado vacío se comunica al usuario', formatos.length > 0 || estadoVacio === 1);
-
-await pagina.getByRole('button', { name: 'Todos', exact: true }).click();
-await pagina.waitForTimeout(200);
 
 console.log('\n── CALENDARIO ──────────────────────────────────────');
 

@@ -35,8 +35,8 @@ npm run build
 npm test
 ```
 
-Abre un navegador real, recorre la página como una persona y comprueba **38
-cosas**: que el contador cuente, que el filtro de sesiones filtre, que el
+Abre un navegador real, recorre la página como una persona y comprueba **39
+cosas**: que el contador cuente, que el candado de acceso funcione, que el
 `.ics` se descargue bien formado, que no haya scroll horizontal en móvil, que
 la consola esté limpia… Al terminar deja capturas de pantalla en
 `tests/capturas/`. Detalle completo más abajo.
@@ -51,7 +51,6 @@ la consola esté limpia… Al terminar deja capturas de pantalla en
 | **Sinopsis** | Texto de presentación y tres cifras clave. |
 | **Tráiler** | Reproductor que no toca YouTube hasta que alguien pulsa play. |
 | **Reparto** | Ocho fichas del reparto anunciado y ficha técnica de la película. |
-| **Sesiones** | Buscador de sesiones por ciudad y formato (IMAX, 4DX, V.O.S.E., Digital). |
 | **Estreno** | La fecha a pantalla completa, el botón de calendario y los botones para compartir. |
 | **FAQ** | Acordeón de preguntas frecuentes. |
 | **404** | Página de error a juego con el resto del sitio, no la de por defecto del hosting. |
@@ -101,7 +100,6 @@ trozos interactivos cargan React, cada uno por separado y cuando toca.
 | `CuentaAtras` | `client:load` | Es el elemento firma del hero: tiene que estar contando desde el primer instante. |
 | `BotonCalendario` | `client:visible` | Sólo importa cuando alguien puede pulsarlo. |
 | `Trailer` | `client:visible` | Está tres pantallas más abajo. |
-| `Entradas` | `client:visible` | Ídem. |
 
 El resto de la página — navegación, sinopsis, reparto, FAQ, pie — es HTML y CSS
 puros, con cero JavaScript.
@@ -134,8 +132,6 @@ puros, con cero JavaScript.
   propio navegador con un `Blob`, siguiendo el RFC 5545 (saltos CRLF, escape de
   comas y punto y coma, recordatorio 24 h antes). También hay enlace directo a
   Google Calendar y a Outlook.
-- **Buscador de sesiones.** Filtra en memoria sobre datos que ya viajaron con
-  el HTML: cambiar de ciudad no dispara ni una petición más.
 - **Compartir.** Botones de WhatsApp, X, Facebook y copiar enlace en la
   sección de estreno — enlaces "intent" públicos, sin backend ni API key. Una
   landing que se dirige a toda la comunidad de Marvel vive de que la
@@ -238,11 +234,9 @@ respuesta concreta, no un intento genérico de "atrapar todo":
 |---|---|
 | Se visita una URL que no existe | `404.astro`: página propia a juego con el resto del sitio, no la de error por defecto del hosting. |
 | `estrenoISO` queda mal formado en `pelicula.js` | `CuentaAtras` detecta la fecha inválida (`Number.isNaN`) y muestra un mensaje en vez de contar `NaN:NaN:NaN:NaN` para siempre. |
-| Una isla de React explota en pleno render | Cada isla (`CuentaAtras`, `Trailer`, `BotonCalendario`, `Entradas`) está envuelta en su propio `ErrorBoundary`: si una falla, muestra un mensaje de repuesto y las otras tres siguen funcionando — no se cae la página entera por una. |
+| Una isla de React explota en pleno render | Cada isla (`CuentaAtras`, `Trailer`, `BotonCalendario`) está envuelta en su propio `ErrorBoundary`: si una falla, muestra un mensaje de repuesto y las otras siguen funcionando — no se cae la página entera por una. |
 | Falla la descarga del `.ics` (Blob/`URL.createObjectURL` no disponible) | `try/catch` alrededor de la descarga: si falla, el menú avisa y deja a mano los enlaces a Google Calendar y Outlook como plan B. |
 | El navegador no expone la Clipboard API (contexto sin TLS, navegador viejo) | El botón de copiar enlace cae a un `<textarea>` oculto + `execCommand('copy')`. |
-| Sin sesiones para la ciudad o el formato elegido | Estado vacío explícito con `role="status"`, no una lista que desaparece sin explicación. |
-| Sin ciudades cargadas (por si `cines`/`ciudades` llegan vacíos de una futura API) | Mensaje "todavía no hay sesiones publicadas" en vez de pestañas vacías. |
 | Falla la carga de una fuente | `font-display: swap` + pila de reserva `system-ui`: el texto se ve enseguida con la fuente del sistema y cambia cuando llega la definitiva, nunca invisible. |
 | El visitante pidió menos movimiento (`prefers-reduced-motion`) | Todas las animaciones se desactivan; el contenido aparece ya revelado en vez de depender de una animación que no va a correr. |
 | JavaScript deshabilitado | El HTML de cada isla ya sale renderizado desde el build (Astro las hidrata, no las crea): la cuenta atrás se ve con guiones (`--`) en vez de un hueco en blanco, y el resto del sitio —que no depende de React— funciona igual. |
@@ -279,16 +273,14 @@ landing-spider-man/
 │   │   ├── Sinopsis.astro
 │   │   ├── SeccionTrailer.astro
 │   │   ├── Reparto.astro
-│   │   ├── Sesiones.astro
 │   │   ├── Estreno.astro
 │   │   ├── Compartir.astro    Botones de WhatsApp, X, Facebook y copiar enlace
 │   │   ├── Faq.astro
 │   │   ├── Pie.astro
-│   │   └── react/             ← Las cuatro islas interactivas
+│   │   └── react/             ← Las tres islas interactivas
 │   │       ├── CuentaAtras.jsx
 │   │       ├── Trailer.jsx
 │   │       ├── BotonCalendario.jsx
-│   │       ├── Entradas.jsx
 │   │       └── ErrorBoundary.jsx  Red de seguridad: si una isla falla, no se cae la página
 │   └── pages/
 │       ├── index.astro        La página, montada a partir de los componentes
@@ -303,15 +295,14 @@ landing-spider-man/
 ### Dónde se cambian las cosas
 
 Casi todo el contenido vive en **`src/data/pelicula.js`**. Si cambia la fecha
-de estreno, llega el ID del tráiler o hay que añadir una ciudad, se toca ese
-archivo y nada más:
+de estreno o el ID del tráiler, se toca ese archivo y nada más:
 
 ```js
 estrenoISO: '2026-07-29T00:00:00+02:00',   // mueve la cuenta atrás
-trailerId: '',                             // pon el ID de YouTube y el reproductor se activa solo
+trailerId: '3B1_P2h7v2k',                  // ID de YouTube del tráiler oficial
 ```
 
-Mientras `trailerId` esté vacío, la sección del tráiler muestra un estado
+Si `trailerId` queda vacío (`''`), la sección del tráiler muestra un estado
 «próximamente» en lugar de romper con un vídeo inexistente.
 
 Los colores y tipografías están en un solo bloque de variables al principio de
@@ -324,6 +315,10 @@ Los colores y tipografías están en un solo bloque de variables al principio de
 Levanta un servidor con el sitio ya compilado, abre el Edge o Chrome que ya
 tengas instalado (no descarga ningún navegador) y verifica:
 
+**Candado de acceso** — que se muestre bloqueado por defecto, que una clave
+incorrecta muestre el error sin desbloquear, y que la clave correcta revele
+el contenido y oculte el candado.
+
 **Estructura y SEO** — idioma declarado, título y descripción de longitud
 razonable, Open Graph, la etiqueta `noindex` que evita que se indexe, un
 único `<h1>`, enlace de salto al contenido.
@@ -333,14 +328,10 @@ que esté oculta al lector de pantalla y que la fecha se anuncie en texto
 accesible.
 
 **Revelado al scroll** — que al cargar no esté todo revelado y que tras
-recorrer la página lo esté (41 de 41 elementos).
+recorrer la página lo esté (37 de 37 elementos).
 
 **Navegación** — barra transparente sobre el hero, sólida al bajar, indicador
 de sección activa funcionando.
-
-**Sesiones** — que cargue la primera ciudad, que cambiar de ciudad cambie la
-lista, que el filtro de formato sea coherente y que el estado vacío se
-comunique.
 
 **Calendario** — que el menú se abra, que anuncie `aria-expanded`, que ofrezca
 tres destinos, que descargue un `.ics` con la fecha correcta, saltos CRLF y el

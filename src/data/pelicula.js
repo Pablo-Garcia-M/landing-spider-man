@@ -36,7 +36,9 @@ export const PELICULA = {
    * <Trailer /> muestra el estado "próximamente" en lugar de romper con un
    * embed a un vídeo inexistente. Cargá el ID y el reproductor se activa solo.
    */
-  trailerId: '',
+  trailerId: '3B1_P2h7v2k',
+  /** Segundo en el que arranca el embed (del link original: &t=5s). */
+  trailerInicioSegundos: 5,
 
   descripcion:
     'Cuenta atrás para el estreno de SPIDER-MAN: Brand New Day. 29 de julio de 2026, solo en cines.',
@@ -72,46 +74,11 @@ export const REPARTO = [
   { actor: 'Liza Colón-Zayas', personaje: 'Personaje sin anunciar' },
 ];
 
-/**
- * DATOS DE DEMOSTRACIÓN. En producción esto lo devuelve la API de la
- * distribuidora; el componente <Entradas /> ya está escrito contra esta forma,
- * así que sustituir el objeto por un `fetch` no cambia una línea de la vista.
- *
- * Forma de cada sesión:
- *   { cine: string, sala: string, horas: string[], formato: string }
- */
-export const CINES = {
-  Madrid: [
-    { cine: 'Kinépolis Ciudad de la Imagen', sala: 'Sala 25', horas: ['16:30', '19:45', '22:50'], formato: 'IMAX' },
-    { cine: 'Cines Callao', sala: 'Sala 1', horas: ['17:00', '20:10', '23:15'], formato: 'Digital' },
-    { cine: 'Yelmo Ideal', sala: 'Sala 4', horas: ['18:20', '21:30'], formato: 'V.O.S.E.' },
-  ],
-  Barcelona: [
-    { cine: 'Cinesa Diagonal Mar', sala: 'Sala 12', horas: ['16:00', '19:20', '22:30'], formato: 'IMAX' },
-    { cine: 'Aribau Multicines', sala: 'Sala 2', horas: ['17:45', '20:50'], formato: 'V.O.S.E.' },
-    { cine: 'Yelmo Icaria', sala: 'Sala 9', horas: ['18:00', '21:10', '00:05'], formato: '4DX' },
-  ],
-  Valencia: [
-    { cine: 'Kinépolis Valencia', sala: 'Sala 18', horas: ['16:15', '19:30', '22:40'], formato: 'IMAX' },
-    { cine: 'Cines Lys', sala: 'Sala 3', horas: ['17:30', '20:40'], formato: 'V.O.S.E.' },
-  ],
-  Sevilla: [
-    { cine: 'Nervión Plaza', sala: 'Sala 7', horas: ['16:45', '20:00', '23:00'], formato: 'Digital' },
-    { cine: 'Cinesur Los Arcos', sala: 'Sala 5', horas: ['18:10', '21:20'], formato: 'Digital' },
-  ],
-  Bilbao: [
-    { cine: 'Yelmo Megapark', sala: 'Sala 14', horas: ['17:15', '20:25', '23:10'], formato: '4DX' },
-    { cine: 'Golem Alhóndiga', sala: 'Sala 1', horas: ['18:40', '21:45'], formato: 'V.O.S.E.' },
-  ],
-};
-
-export const CIUDADES = Object.keys(CINES);
-
 export const FAQ = [
   {
     pregunta: '¿Cuándo se estrena?',
     respuesta:
-      'El 29 de julio de 2026 en cines de toda España. Los pases de medianoche del día 28 se anunciarán en las próximas semanas.',
+      'El 29 de julio de 2026 en cines de toda Hispanoamérica y España. Los pases de medianoche se anunciarán en las próximas semanas.',
   },
   {
     pregunta: '¿Hay escenas post-créditos?',
@@ -120,17 +87,17 @@ export const FAQ = [
   {
     pregunta: '¿Cuándo salen las entradas a la venta?',
     respuesta:
-      'La venta anticipada abre unas semanas antes del estreno. Añadí el estreno a tu calendario desde esta página y no se te va a pasar.',
+      'La venta anticipada abre unas semanas antes del estreno, con fecha propia en cada país. Añadí el estreno a tu calendario desde esta página y no se te va a pasar.',
   },
   {
     pregunta: '¿Se puede ver en versión original?',
     respuesta:
-      'Sí. Filtrá por tu ciudad en la sección de sesiones: las copias en V.O.S.E. están marcadas con su etiqueta.',
+      'Sí. La disponibilidad de copias subtituladas depende de cada cine — consultá la cartelera local más cerca del estreno.',
   },
   {
     pregunta: '¿Esta web es oficial?',
     respuesta:
-      'No. Es un proyecto de portfolio construido con Astro y React. No está afiliado a Sony Pictures ni a Marvel; las marcas y personajes pertenecen a sus titulares.',
+      'No. Es una página hecha por fans. No está afiliada a Sony Pictures ni a Marvel; las marcas y personajes pertenecen a sus titulares.',
   },
 ];
 
@@ -139,6 +106,5 @@ export const NAVEGACION = [
   { id: 'sinopsis', texto: 'Sinopsis' },
   { id: 'trailer', texto: 'Tráiler' },
   { id: 'reparto', texto: 'Reparto' },
-  { id: 'sesiones', texto: 'Sesiones' },
-  { id: 'faq', texto: 'FAQ' },
+  { id: 'faq', texto: 'Preguntas' },
 ];

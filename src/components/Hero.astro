@@ -12,39 +12,41 @@ import { PELICULA } from '../data/pelicula.js';
     <Skyline />
   </div>
 
-  <div class="hero__contenido">
-    <p class="hero__eyebrow">Solo en cines &middot; {PELICULA.estrenoLargo}</p>
+  <div class="hero__centro">
+    <div class="hero__contenido">
+      <p class="hero__eyebrow">Solo en cines &middot; {PELICULA.estrenoLargo}</p>
 
-    <h1 class="hero__titulo">
-      <span class="hero__titulo-a">{PELICULA.titulo}</span>
-      <span class="hero__titulo-b">{PELICULA.subtitulo}</span>
-    </h1>
+      <h1 class="hero__titulo">
+        <span class="hero__titulo-a">{PELICULA.titulo}</span>
+        <span class="hero__titulo-b">{PELICULA.subtitulo}</span>
+      </h1>
 
-    {/*
-      client:load — es lo primero que ve el visitante y tiene que estar contando
-      desde el primer instante. Cualquier estrategia diferida dejaría "--" a la
-      vista durante el arranque, justo en el elemento firma de la página.
-    */}
-    <CuentaAtras client:load objetivoISO={PELICULA.estrenoISO} />
-
-    {/* La información que el contador esconde al lector de pantalla, dicha una vez. */}
-    <p class="sr-only">
-      El estreno de {PELICULA.tituloCompleto} es el {PELICULA.estrenoLargo}.
-    </p>
-
-    <div class="acciones hero__acciones">
-      <a href="#trailer" class="boton boton--solido">Ver el tráiler</a>
       {/*
-        client:visible — el menú sólo importa cuando alguien puede pulsarlo.
-        Su JS no compite con el del contador durante la carga inicial.
+        client:load — es lo primero que ve el visitante y tiene que estar contando
+        desde el primer instante. Cualquier estrategia diferida dejaría "--" a la
+        vista durante el arranque, justo en el elemento firma de la página.
       */}
-      <BotonCalendario
-        client:visible
-        titulo={`${PELICULA.tituloCompleto} — Estreno`}
-        inicio={PELICULA.estrenoICS.inicio}
-        fin={PELICULA.estrenoICS.fin}
-        descripcion="Estreno en cines."
-      />
+      <CuentaAtras client:load objetivoISO={PELICULA.estrenoISO} />
+
+      {/* La información que el contador esconde al lector de pantalla, dicha una vez. */}
+      <p class="sr-only">
+        El estreno de {PELICULA.tituloCompleto} es el {PELICULA.estrenoLargo}.
+      </p>
+
+      <div class="acciones hero__acciones">
+        <a href="#trailer" class="boton boton--solido">Ver el tráiler</a>
+        {/*
+          client:visible — el menú sólo importa cuando alguien puede pulsarlo.
+          Su JS no compite con el del contador durante la carga inicial.
+        */}
+        <BotonCalendario
+          client:visible
+          titulo={`${PELICULA.tituloCompleto} — Estreno`}
+          inicio={PELICULA.estrenoICS.inicio}
+          fin={PELICULA.estrenoICS.fin}
+          descripcion="Estreno en cines."
+        />
+      </div>
     </div>
   </div>
 
@@ -85,9 +87,20 @@ import { PELICULA } from '../data/pelicula.js';
     height: min(42vh, 340px);
   }
 
+  /* Envuelve el contenido y lo centra por su cuenta (flexbox), en vez de
+     centrarlo directamente en TODO el alto del hero como antes. La
+     diferencia importa en ventanas bajas: con "padding-top" reservando el
+     alto de la barra fija ANTES de centrar, el "eyebrow" nunca puede
+     terminar tapado o pegado contra el nav — en el peor caso (ventana muy
+     baja), el contenido arranca justo debajo de la barra, nunca antes. */
+  .hero__centro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: var(--altura-nav);
+  }
+
   .hero__contenido {
-    align-self: center;
-    justify-self: center;
     text-align: center;
     padding: var(--espacio);
     padding-bottom: min(26vh, 220px);
