@@ -91,12 +91,12 @@ export const PREGUNTAS = [
   {
     pregunta: '¿Se puede ver en versión original?',
     respuesta:
-      'Sí. La disponibilidad de copias subtituladas depende de cada cine — consultá la cartelera local más cerca del estreno.',
+      'Sí. La disponibilidad de copias subtituladas depende de cada cine. Consultá la cartelera local más cerca del estreno.',
   },
   {
     pregunta: '¿Esta web es oficial?',
     respuesta:
-      'No. Es una página hecha por fans. No está afiliada a Sony Pictures ni a Marvel; las marcas y personajes pertenecen a sus titulares.',
+      'No. Es una página hecha por fans. No está afiliada a Sony Pictures ni a Marvel. Las marcas y personajes pertenecen a sus titulares.',
   },
 ];
 

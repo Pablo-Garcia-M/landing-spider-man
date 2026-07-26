@@ -9,6 +9,16 @@ SPIDER-MAN: Brand New Day con InfoJobs* (referencia IJ-JOB).
 
 ---
 
+## Ver la demo
+
+El sitio está desplegado en GitHub Pages, pero mientras el proyecto espera
+aprobación queda fuera de buscadores (`noindex`, sin sitemap) y detrás de un
+candado simbólico en el propio front-end — no es seguridad real, es un filtro
+para que sólo entre quien tenga el link y la clave. Si querés ver la demo en
+vivo, pedime el enlace y la clave de acceso.
+
+---
+
 ## Cómo probarla en 2 minutos
 
 Sólo hace falta tener [Node.js 22.12 o superior](https://nodejs.org) instalado
@@ -35,7 +45,7 @@ npm run build
 npm test
 ```
 
-Abre un navegador real, recorre la página como una persona y comprueba **39
+Abre un navegador real, recorre la página como una persona y comprueba **41
 cosas**: que el contador cuente, que el candado de acceso funcione, que el
 `.ics` se descargue bien formado, que no haya scroll horizontal en móvil, que
 la consola esté limpia… Al terminar deja capturas de pantalla en
@@ -214,10 +224,10 @@ proyecto sí tiene un par de capas de seguridad reales:
   proyecto aparecieron 3 avisos (uno de ellos alto) en Astro/esbuild/sharp;
   se corrigieron subiendo Astro de la rama 5.x a la 7.1.3 (junto con
   `@astrojs/react` a 6.0.1) y corriendo `npm audit fix`. Tras la subida se
-  volvió a correr toda la batería de `npm test` — 38/38 — para confirmar que
-  el salto de versión mayor no rompió nada. Conviene volver a correr
-  `npm audit` antes de cada despliegue importante: las dependencias no se
-  quedan seguras solas.
+  volvió a correr toda la batería de `npm test`, sin ningún fallo, para
+  confirmar que el salto de versión mayor no rompió nada. Conviene volver a
+  correr `npm audit` antes de cada despliegue importante: las dependencias no
+  se quedan seguras solas.
 
 Se auditó el código en busca de API keys, tokens o contraseñas hardcodeadas:
 no hay ninguna, porque no hay ningún servicio que las necesite.
@@ -328,7 +338,7 @@ que esté oculta al lector de pantalla y que la fecha se anuncie en texto
 accesible.
 
 **Revelado al scroll** — que al cargar no esté todo revelado y que tras
-recorrer la página lo esté (37 de 37 elementos).
+recorrer la página se revele el 100% de los elementos.
 
 **Navegación** — barra transparente sobre el hero, sólida al bajar, indicador
 de sección activa funcionando.
@@ -410,7 +420,7 @@ el DNS apuntando a GitHub.
 ## Stack
 
 - **[Astro 7](https://astro.build)** — sitio estático con arquitectura de islas
-- **[React 19](https://react.dev)** — sólo en las cuatro partes interactivas
+- **[React 19](https://react.dev)** — sólo en las tres partes interactivas
 - **CSS moderno** — variables, `grid`, `clamp()`, `aspect-ratio`,
   `animation-timeline`. Sin frameworks de estilos.
 - **JavaScript** — sin TypeScript, sin dependencias de runtime más allá de React
